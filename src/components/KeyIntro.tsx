@@ -92,11 +92,14 @@ export const KeyIntro: React.FC<KeyIntroProps> = ({ onComplete, guestName, isAlr
       {/* Header text */}
       <div className="flex flex-col items-center text-center mt-6 z-10 space-y-2 max-w-sm">
         {guestName ? (
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-gold/40 bg-black/60 backdrop-blur-md shadow-[0_0_15px_rgba(212,175,55,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-gold animate-ping" />
-            <span className="text-xs font-sans tracking-widest uppercase text-amber-200">
-              {guestName}
-            </span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-[11px] font-sans tracking-widest uppercase text-amber-400/80">Invocada para</span>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border-2 border-gold/60 bg-black/70 backdrop-blur-md shadow-[0_0_25px_rgba(212,175,55,0.35)]">
+              <span className="w-2.5 h-2.5 rounded-full bg-gold animate-ping" />
+              <span className="text-2xl md:text-3xl font-gothic tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold to-amber-400 font-bold drop-shadow-[0_0_10px_rgba(212,175,55,0.8)]">
+                {guestName}
+              </span>
+            </div>
           </div>
         ) : (
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full border border-amber-500/30 bg-black/60 text-amber-300 text-[10px] font-sans tracking-widest uppercase">

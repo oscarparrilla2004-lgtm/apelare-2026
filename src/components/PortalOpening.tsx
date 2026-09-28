@@ -42,15 +42,27 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
       soundEngine.playDoorStuck();
     }, 2000);
 
-    // 4. Force through the jam — doors swing wide open & video is revealed!
+    // 4. Force through the jam — doors swing wide open & video is revealed with sound!
     const timer3 = setTimeout(() => {
       setDoorStage('FORCE_OPEN');
       setIsEnteringMansion(true);
       soundEngine.playDoorForceOpen();
       soundEngine.duckAmbient(true);
 
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current.play().catch(() => {});
+      if (videoRef.current) {
+        // Unmute and play with sound — user has already interacted (lock rotation)
+        videoRef.current.muted = false;
+        setIsMuted(false);
+        if (videoRef.current.paused) {
+          videoRef.current.play().catch(() => {
+            // If browser blocks unmuted, fall back to muted
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              setIsMuted(true);
+              videoRef.current.play().catch(() => {});
+            }
+          });
+        }
       }
     }, 4800);
 
