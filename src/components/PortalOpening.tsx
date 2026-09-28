@@ -159,6 +159,7 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
             playsInline
             muted
             autoPlay
+            loop={false}
             preload="auto"
             onEnded={handleVideoEnded}
             onError={handleVideoError}
