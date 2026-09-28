@@ -11,6 +11,9 @@ interface TeamSelectionProps {
   guestName: string;
   witchNickname: string;
   gender?: 'masculino' | 'femenino';
+  isAlreadyEnrolled?: boolean;
+  preEnrolledTeamId?: string;
+  preEnrolledTeamName?: string;
   onComplete: (teamId: string, teamName: string) => void;
 }
 
@@ -19,6 +22,9 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
   guestName,
   witchNickname,
   gender = 'masculino',
+  isAlreadyEnrolled = false,
+  preEnrolledTeamId,
+  preEnrolledTeamName,
   onComplete,
 }) => {
   const [teams, setTeams] = useState<TeamsOverviewResponse['teams']>(
@@ -30,12 +36,29 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
     }))
   );
   const [totalPlayers, setTotalPlayers] = useState(0);
-  const [activeHighlightId, setActiveHighlightId] = useState<string | null>(null);
-  const [assignedTeam, setAssignedTeam] = useState<{ id: string; name: string; icon: string; tagline: string } | null>(null);
+  const [activeHighlightId, setActiveHighlightId] = useState<string | null>(preEnrolledTeamId || null);
+  const [assignedTeam, setAssignedTeam] = useState<{ id: string; name: string; icon: string; tagline: string } | null>(() => {
+    if (preEnrolledTeamId) {
+      const found = TEAMS_CONFIG.find((t) => t.id === preEnrolledTeamId);
+      if (found) return { id: found.id, name: found.name, icon: found.icon, tagline: found.tagline };
+    }
+    return null;
+  });
   const [isSpinning, setIsSpinning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(isAlreadyEnrolled || !!preEnrolledTeamId);
+
+  useEffect(() => {
+    if (preEnrolledTeamId) {
+      const found = TEAMS_CONFIG.find((t) => t.id === preEnrolledTeamId);
+      if (found) {
+        setAssignedTeam({ id: found.id, name: found.name, icon: found.icon, tagline: found.tagline });
+        setActiveHighlightId(found.id);
+        setIsSuccess(true);
+      }
+    }
+  }, [preEnrolledTeamId]);
 
   const [spouseExclusionInfo, setSpouseExclusionInfo] = useState<{
     spouseName: string;

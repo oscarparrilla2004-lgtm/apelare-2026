@@ -35,3 +35,16 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    if (body.action === 'reset_all') {
+      const result = await TeamsService.resetAllTeams();
+      return NextResponse.json(result);
+    }
+    return NextResponse.json({ success: false, message: 'Acción no reconocida' }, { status: 400 });
+  } catch {
+    return NextResponse.json({ success: false, message: 'Error al reiniciar clanes' }, { status: 500 });
+  }
+}

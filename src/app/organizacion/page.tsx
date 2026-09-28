@@ -37,6 +37,7 @@ export default function OrganizacionPage() {
   const [copiedAllLinks, setCopiedAllLinks] = useState(false);
   const [copiedLinkIndex, setCopiedLinkIndex] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ teamId: string; memberId: string; name: string } | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
   const [notification, setNotification] = useState<string | null>(null);
 
   // Link Generator State
@@ -70,6 +71,26 @@ export default function OrganizacionPage() {
     setIsAuthenticated(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('akelarre_admin_auth');
+    }
+  };
+
+  const handleResetAll = async () => {
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset_all' }),
+      });
+      const resData = await res.json();
+      if (resData.success) {
+        showToast('¡Todos los clanes han sido reiniciados a 0 almas!');
+        setShowResetConfirm(false);
+        fetchData();
+      } else {
+        showToast('Error al reiniciar los clanes.');
+      }
+    } catch {
+      showToast('Error de conexión.');
     }
   };
 
@@ -364,6 +385,15 @@ export default function OrganizacionPage() {
             </button>
 
             <button
+              onClick={() => setShowResetConfirm(true)}
+              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-red-950/40 border border-red-500/50 text-red-300 text-xs font-gothic tracking-wider hover:bg-red-900/60 active:scale-95 transition-all cursor-pointer"
+              title="Poner todos los contadores de clanes a 0"
+            >
+              <RefreshCw className="w-4 h-4 text-red-400" />
+              <span>REINICIAR A CERO</span>
+            </button>
+
+            <button
               onClick={fetchData}
               disabled={isLoading}
               className="p-2.5 rounded-xl bg-black/70 border border-white/20 text-white/70 hover:text-white hover:border-white/40 active:scale-95 transition-all cursor-pointer"
@@ -374,7 +404,7 @@ export default function OrganizacionPage() {
 
             <button
               onClick={handleLogout}
-              className="p-2.5 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 hover:bg-red-900/60 transition-all text-xs font-gothic cursor-pointer"
+              className="p-2.5 rounded-xl bg-black/60 border border-white/20 text-white/70 hover:text-white hover:border-white/50 transition-all text-xs font-gothic cursor-pointer"
               title="Cerrar sesión"
             >
               🔒 SALIR
@@ -775,6 +805,37 @@ export default function OrganizacionPage() {
                 className="flex-1 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 border border-red-400 text-white text-xs font-gothic font-bold uppercase transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)] cursor-pointer"
               >
                 SÍ, ELIMINAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset All Teams Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="max-w-md w-full p-6 rounded-2xl bg-[#1a0808] border-2 border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)] space-y-4 animate-fade-in text-center">
+            <div className="w-12 h-12 rounded-full bg-red-950 border border-red-400 flex items-center justify-center mx-auto text-red-400">
+              <RefreshCw className="w-6 h-6 animate-spin" />
+            </div>
+
+            <h3 className="text-lg font-gothic text-red-400 uppercase font-bold">¿REINICIAR TODOS LOS CLANES A CERO?</h3>
+            <p className="text-xs font-sans text-amber-100/90 leading-relaxed">
+              Esta acción vaciará todas las plazas registradas de los 6 clanes (0/42). Úsalo para dejar la aplicación completamente limpia antes de enviar los enlaces a tus invitados.
+            </p>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl bg-black/70 border border-white/20 text-white/70 text-xs font-gothic uppercase hover:text-white transition-colors cursor-pointer"
+              >
+                CANCELAR
+              </button>
+              <button
+                onClick={handleResetAll}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 border border-red-300 text-white text-xs font-gothic font-bold uppercase transition-colors shadow-[0_0_20px_rgba(239,68,68,0.8)] cursor-pointer"
+              >
+                SÍ, VACIAR A CERO
               </button>
             </div>
           </div>

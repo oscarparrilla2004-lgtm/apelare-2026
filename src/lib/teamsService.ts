@@ -262,4 +262,23 @@ export class TeamsService {
     }
     return { success: false, message: 'Equipo no encontrado.' };
   }
+
+  /**
+   * Reinicia todos los clanes a 0 miembros (para uso de administración)
+   */
+  static async resetAllTeams(): Promise<{ success: boolean; message: string }> {
+    const data: StoredTeamsData = {
+      members: {
+        pecadores_caldero: [],
+        akelarre_extasis: [],
+        luna_roja: [],
+        placer_oscuro: [],
+        viboras_deseo: [],
+        vela_negra: [],
+      },
+      updatedAt: new Date().toISOString(),
+    };
+    await saveTeamsData(data);
+    return { success: true, message: 'Todos los clanes han sido reiniciados a 0 almas.' };
+  }
 }

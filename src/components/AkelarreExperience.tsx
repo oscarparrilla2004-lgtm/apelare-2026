@@ -27,6 +27,7 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
   const [gender, setGender] = useState<'masculino' | 'femenino'>('masculino');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedTeamName, setSelectedTeamName] = useState<string>('');
+  const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState<boolean>(false);
 
   useEffect(() => {
     fetch(`/api/verify-token?token=${encodeURIComponent(initialToken)}`)
@@ -38,12 +39,12 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
           if (data.guest?.genero) setGender(data.guest.genero);
           if (data.soulCount) setSoulCount(data.soulCount);
 
-          // Single-use token protection: if already registered, show VIP pass directly
+          // If already registered, store assigned info so clan is locked
           if (data.isSealed || data.guest?.estado === 'EQUIPO_SELECCIONADO') {
+            setIsAlreadyEnrolled(true);
             if (data.guest?.alias) setWitchNickname(data.guest.alias);
             if (data.guest?.equipoId) setSelectedTeamId(data.guest.equipoId);
             if (data.guest?.equipoNombre) setSelectedTeamName(data.guest.equipoNombre);
-            setCurrentStep('REWARD');
           }
         }
       })
@@ -67,6 +68,8 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
         {currentStep === 'INTRO' && (
           <KeyIntro
             guestName={guestName || guest?.nombre}
+            isAlreadyEnrolled={isAlreadyEnrolled}
+            onSkipToVip={() => setCurrentStep('REWARD')}
             onComplete={() => setCurrentStep('LOCK')}
           />
         )}
@@ -93,6 +96,8 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
           <Pact
             token={initialToken}
             initialGuestName={guestName || guest?.nombre}
+            initialWitchNickname={witchNickname}
+            isAlreadySealed={isAlreadyEnrolled}
             onComplete={(name, nickname, g) => {
               setGuestName(name);
               setWitchNickname(nickname);
@@ -108,6 +113,9 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
             guestName={guestName}
             witchNickname={witchNickname}
             gender={gender}
+            isAlreadyEnrolled={isAlreadyEnrolled}
+            preEnrolledTeamId={selectedTeamId}
+            preEnrolledTeamName={selectedTeamName}
             onComplete={(teamId, teamName) => {
               setSelectedTeamId(teamId);
               setSelectedTeamName(teamName);

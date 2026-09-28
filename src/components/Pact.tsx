@@ -10,18 +10,28 @@ import { ArrowRight } from 'lucide-react';
 interface PactProps {
   token?: string;
   initialGuestName?: string;
+  initialWitchNickname?: string;
+  isAlreadySealed?: boolean;
   onComplete: (name: string, nickname: string, gender: 'masculino' | 'femenino') => void;
 }
 
-export const Pact: React.FC<PactProps> = ({ token = 'DEMO', initialGuestName = '', onComplete }) => {
+export const Pact: React.FC<PactProps> = ({
+  token = 'DEMO',
+  initialGuestName = '',
+  initialWitchNickname = '',
+  isAlreadySealed = false,
+  onComplete,
+}) => {
   const [userName, setUserName] = useState(initialGuestName);
   const [gender, setGender] = useState<'masculino' | 'femenino'>(
     initialGuestName ? detectGender(initialGuestName) : 'masculino'
   );
-  const [confirmedWarning, setConfirmedWarning] = useState(false);
-  const [isSealed, setIsSealed] = useState(false);
+  const [confirmedWarning, setConfirmedWarning] = useState(isAlreadySealed);
+  const [isSealed, setIsSealed] = useState(isAlreadySealed);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [witchNickname, setWitchNickname] = useState('');
+  const [witchNickname, setWitchNickname] = useState(
+    initialWitchNickname || (initialGuestName ? generateWitchNickname(initialGuestName, detectGender(initialGuestName)) : '')
+  );
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
@@ -29,7 +39,14 @@ export const Pact: React.FC<PactProps> = ({ token = 'DEMO', initialGuestName = '
       setUserName(initialGuestName);
       setGender(detectGender(initialGuestName));
     }
-  }, [initialGuestName, userName]);
+    if (isAlreadySealed) {
+      setIsSealed(true);
+      setConfirmedWarning(true);
+      if (initialWitchNickname) {
+        setWitchNickname(initialWitchNickname);
+      }
+    }
+  }, [initialGuestName, userName, isAlreadySealed, initialWitchNickname]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;

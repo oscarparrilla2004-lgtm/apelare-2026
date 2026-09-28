@@ -8,9 +8,11 @@ import { eventConfig } from '@/config/eventConfig';
 interface KeyIntroProps {
   onComplete: () => void;
   guestName?: string;
+  isAlreadyEnrolled?: boolean;
+  onSkipToVip?: () => void;
 }
 
-export const KeyIntro: React.FC<KeyIntroProps> = ({ onComplete, guestName }) => {
+export const KeyIntro: React.FC<KeyIntroProps> = ({ onComplete, guestName, isAlreadyEnrolled, onSkipToVip }) => {
   const [progress, setProgress] = useState(0);
   const [isPressing, setIsPressing] = useState(false);
   const [isAwakened, setIsAwakened] = useState(false);
@@ -168,6 +170,15 @@ export const KeyIntro: React.FC<KeyIntroProps> = ({ onComplete, guestName }) => 
           {eventConfig.texts.introInstruction}
         </p>
         <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+
+        {isAlreadyEnrolled && onSkipToVip && (
+          <button
+            onClick={onSkipToVip}
+            className="mt-2 px-4 py-2 rounded-full bg-black/60 border border-gold/40 text-gold text-xs font-gothic tracking-wider hover:bg-gold/15 hover:border-gold transition-all cursor-pointer shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+          >
+            🎟️ Ver directamente mi Pase VIP
+          </button>
+        )}
       </div>
     </div>
   );
