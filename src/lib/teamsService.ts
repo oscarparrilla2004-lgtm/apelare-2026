@@ -8,24 +8,68 @@ const DATA_DIR = isVercel ? path.join('/tmp', 'data') : path.join(process.cwd(),
 const DATA_FILE = path.join(DATA_DIR, 'teams_data.json');
 const BUNDLED_DATA_FILE = path.join(process.cwd(), 'data', 'teams_data.json');
 
+const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+const REDIS_KEY = 'akelarre_2026_teams';
+
 interface StoredTeamsData {
   members: Record<string, TeamMember[]>; // teamId -> TeamMember[]
   updatedAt: string;
 }
 
+function createEmptyData(): StoredTeamsData {
+  return {
+    members: {
+      pecadores_caldero: [],
+      akelarre_extasis: [],
+      luna_roja: [],
+      placer_oscuro: [],
+      viboras_deseo: [],
+      vela_negra: [],
+    },
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 async function ensureDataFile(): Promise<StoredTeamsData> {
+  // 1. Try Cloud Redis (Upstash / Vercel KV) if connected
+  if (REDIS_URL && REDIS_TOKEN) {
+    try {
+      const res = await fetch(`${REDIS_URL}/get/${REDIS_KEY}`, {
+        headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+        cache: 'no-store',
+      });
+      const data = await res.json();
+      if (data.result) {
+        const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+        for (const team of TEAMS_CONFIG) {
+          if (!parsed.members[team.id]) {
+            parsed.members[team.id] = [];
+          }
+        }
+        return parsed;
+      } else {
+        // Initialize key in Redis if empty
+        const fresh = createEmptyData();
+        await saveTeamsData(fresh);
+        return fresh;
+      }
+    } catch {
+      // Fallback to file if redis error
+    }
+  }
+
+  // 2. Local/Serverless File Storage fallback
   try {
     await fs.mkdir(DATA_DIR, { recursive: true });
     let content: string;
     try {
       content = await fs.readFile(DATA_FILE, 'utf-8');
     } catch {
-      // If on Vercel and /tmp file not created yet, try to load bundled file
       content = await fs.readFile(BUNDLED_DATA_FILE, 'utf-8');
       await fs.writeFile(DATA_FILE, content, 'utf-8');
     }
     const parsed = JSON.parse(content) as StoredTeamsData;
-    // Ensure all team keys exist
     for (const team of TEAMS_CONFIG) {
       if (!parsed.members[team.id]) {
         parsed.members[team.id] = [];
@@ -33,18 +77,7 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
     }
     return parsed;
   } catch {
-    // If not exists or invalid, create fresh structure
-    const initialData: StoredTeamsData = {
-      members: {
-        pecadores_caldero: [],
-        akelarre_extasis: [],
-        luna_roja: [],
-        placer_oscuro: [],
-        viboras_deseo: [],
-        vela_negra: [],
-      },
-      updatedAt: new Date().toISOString(),
-    };
+    const initialData = createEmptyData();
     try {
       await fs.mkdir(DATA_DIR, { recursive: true });
       await fs.writeFile(DATA_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
@@ -55,6 +88,25 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
 
 async function saveTeamsData(data: StoredTeamsData): Promise<void> {
   data.updatedAt = new Date().toISOString();
+
+  // Save to Cloud Redis if connected
+  if (REDIS_URL && REDIS_TOKEN) {
+    try {
+      await fetch(`${REDIS_URL}/set/${REDIS_KEY}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${REDIS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(JSON.stringify(data)),
+      });
+      return;
+    } catch {
+      // Fallback to file
+    }
+  }
+
+  // Fallback to file system
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
