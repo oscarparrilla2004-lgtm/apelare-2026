@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { WaxSeal } from './WaxSeal';
 import { soundEngine } from '@/lib/soundEngine';
 import { eventConfig } from '@/config/eventConfig';
-import { generateWitchNickname, detectGender } from '@/lib/witchNickname';
+import { generateWitchNickname, generateUniqueWitchNickname, detectGender } from '@/lib/witchNickname';
 import { ArrowRight } from 'lucide-react';
 
 interface PactProps {
@@ -69,7 +69,24 @@ export const Pact: React.FC<PactProps> = ({
     if (isSealed || isSubmitting) return;
 
     setIsSubmitting(true);
-    const nickname = generateWitchNickname(userName, gender);
+
+    // Fetch all already-used nicknames from the DB to guarantee uniqueness
+    let usedNicknames: string[] = [];
+    try {
+      const res = await fetch('/api/teams', { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success && data.teams) {
+        // Extract all aliasBrujo values already assigned
+        usedNicknames = (data.teams as Array<{ members?: Array<{ aliasBrujo?: string }> }>)
+          .flatMap((t) => t.members || [])
+          .map((m) => m.aliasBrujo || '')
+          .filter(Boolean);
+      }
+    } catch {
+      // If fetch fails, fall back to simple hash (better than blocking the user)
+    }
+
+    const nickname = generateUniqueWitchNickname(userName, gender, usedNicknames);
     setWitchNickname(nickname);
 
     soundEngine.playWaxSeal();

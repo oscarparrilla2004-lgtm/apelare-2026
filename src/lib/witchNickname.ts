@@ -84,3 +84,40 @@ export function generateWitchNickname(name: string, explicitGender?: 'masculino'
   const index = Math.abs(hash) % pool.length;
   return pool[index];
 }
+
+/**
+ * Genera un apodo único que no esté ya en uso.
+ * usedNicknames: lista de apodos ya asignados en la BD.
+ */
+export function generateUniqueWitchNickname(
+  name: string,
+  explicitGender: 'masculino' | 'femenino',
+  usedNicknames: string[]
+): string {
+  if (!name || name.trim() === '') return 'El Iniciado';
+
+  const pool = explicitGender === 'masculino' ? MALE_NICKNAMES : FEMALE_NICKNAMES;
+  const usedSet = new Set(usedNicknames.map((n) => n.toLowerCase().trim()));
+
+  const cleanName = name.trim();
+  let hash = 0;
+  for (let i = 0; i < cleanName.length; i++) {
+    hash = (hash << 5) - hash + cleanName.charCodeAt(i);
+    hash |= 0;
+  }
+
+  // Try starting from the hash-based index, then rotate through the pool to find a free slot
+  const startIndex = Math.abs(hash) % pool.length;
+  for (let offset = 0; offset < pool.length; offset++) {
+    const candidate = pool[(startIndex + offset) % pool.length];
+    if (!usedSet.has(candidate.toLowerCase().trim())) {
+      return candidate;
+    }
+  }
+
+  // All nicknames taken — append a number suffix to the hash-based one
+  const base = pool[startIndex];
+  let suffix = 2;
+  while (usedSet.has(`${base} ${suffix}`.toLowerCase())) suffix++;
+  return `${base} ${suffix}`;
+}
