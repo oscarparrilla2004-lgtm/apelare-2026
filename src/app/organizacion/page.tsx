@@ -79,7 +79,7 @@ export default function OrganizacionPage() {
       const res = await fetch('/api/admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reset_all' }),
+        body: JSON.stringify({ action: 'reset_all', password: 'admin' }),
       });
       const resData = await res.json();
       if (resData.success) {

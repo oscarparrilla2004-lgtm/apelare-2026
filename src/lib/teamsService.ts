@@ -47,15 +47,22 @@ function createEmptyData(): StoredTeamsData {
 async function ensureDataFile(): Promise<StoredTeamsData> {
   const { url: redisUrl, token: redisToken } = getRedisCredentials();
 
-  // 1. Try Cloud Redis (Upstash / Vercel KV) if connected
+  // 1. Try Cloud Redis (Upstash / Vercel KV) if connected — this is the ONLY source of truth
   if (redisUrl && redisToken) {
     try {
       const res = await fetch(`${redisUrl}/get/${REDIS_KEY}`, {
         headers: { Authorization: `Bearer ${redisToken}` },
         cache: 'no-store',
       });
+
+      if (!res.ok) {
+        throw new Error(`Redis HTTP error: ${res.status}`);
+      }
+
       const data = await res.json();
+
       if (data.result) {
+        // Key exists and has data — parse and return it
         const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
         for (const team of TEAMS_CONFIG) {
           if (!parsed.members[team.id]) {
@@ -64,17 +71,19 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
         }
         return parsed;
       } else {
-        // Initialize key in Redis if empty
+        // Key doesn't exist yet in Redis — return empty WITHOUT saving (prevents wiping on transient null)
         const fresh = createEmptyData();
-        await saveTeamsData(fresh);
         return fresh;
       }
-    } catch {
-      // Fallback to file if redis error
+    } catch (err) {
+      // Redis error — do NOT fall through to file (file is always empty on Vercel /tmp cold starts)
+      // Return empty data in memory only — do NOT save it to Redis
+      console.error('[TeamsService] Redis read error, returning in-memory empty:', err);
+      return createEmptyData();
     }
   }
 
-  // 2. Local/Serverless File Storage fallback
+  // 2. Local dev fallback only (not used on Vercel since Redis credentials are always present)
   try {
     await fs.mkdir(DATA_DIR, { recursive: true });
     let content: string;
@@ -92,12 +101,7 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
     }
     return parsed;
   } catch {
-    const initialData = createEmptyData();
-    try {
-      await fs.mkdir(DATA_DIR, { recursive: true });
-      await fs.writeFile(DATA_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
-    } catch {}
-    return initialData;
+    return createEmptyData();
   }
 }
 
