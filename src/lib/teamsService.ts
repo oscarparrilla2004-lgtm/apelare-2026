@@ -8,8 +8,21 @@ const DATA_DIR = isVercel ? path.join('/tmp', 'data') : path.join(process.cwd(),
 const DATA_FILE = path.join(DATA_DIR, 'teams_data.json');
 const BUNDLED_DATA_FILE = path.join(process.cwd(), 'data', 'teams_data.json');
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+function getRedisCredentials() {
+  const env = process.env;
+  let url = env.UPSTASH_REDIS_REST_URL || env.KV_REST_API_URL || env.STORAGE_REST_API_URL;
+  let token = env.UPSTASH_REDIS_REST_TOKEN || env.KV_REST_API_TOKEN || env.STORAGE_REST_API_TOKEN;
+
+  if (!url || !token) {
+    const urlKey = Object.keys(env).find((k) => k.endsWith('_REST_API_URL'));
+    const tokenKey = Object.keys(env).find((k) => k.endsWith('_REST_API_TOKEN'));
+    if (urlKey) url = env[urlKey];
+    if (tokenKey) token = env[tokenKey];
+  }
+
+  return { url, token };
+}
+
 const REDIS_KEY = 'akelarre_2026_teams';
 
 interface StoredTeamsData {
@@ -32,11 +45,13 @@ function createEmptyData(): StoredTeamsData {
 }
 
 async function ensureDataFile(): Promise<StoredTeamsData> {
+  const { url: redisUrl, token: redisToken } = getRedisCredentials();
+
   // 1. Try Cloud Redis (Upstash / Vercel KV) if connected
-  if (REDIS_URL && REDIS_TOKEN) {
+  if (redisUrl && redisToken) {
     try {
-      const res = await fetch(`${REDIS_URL}/get/${REDIS_KEY}`, {
-        headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+      const res = await fetch(`${redisUrl}/get/${REDIS_KEY}`, {
+        headers: { Authorization: `Bearer ${redisToken}` },
         cache: 'no-store',
       });
       const data = await res.json();
@@ -88,14 +103,15 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
 
 async function saveTeamsData(data: StoredTeamsData): Promise<void> {
   data.updatedAt = new Date().toISOString();
+  const { url: redisUrl, token: redisToken } = getRedisCredentials();
 
   // Save to Cloud Redis if connected
-  if (REDIS_URL && REDIS_TOKEN) {
+  if (redisUrl && redisToken) {
     try {
-      await fetch(`${REDIS_URL}/set/${REDIS_KEY}`, {
+      await fetch(`${redisUrl}/set/${REDIS_KEY}`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${REDIS_TOKEN}`,
+          Authorization: `Bearer ${redisToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(JSON.stringify(data)),
