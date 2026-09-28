@@ -69,7 +69,7 @@ export const eventConfig: EventConfig = {
   bizumDeadline: "6 de Octubre",
   bizumInstruction: "Bizum a Oscar (609 01 62 87) antes del 6 de Octubre",
   paymentReminder: "Acuérdate de hacer tu pago, no esperes al último momento",
-  whatsappLink: process.env.NEXT_PUBLIC_WHATSAPP_LINK || "[WHATSAPP_GROUP_LINK]",
+  whatsappLink: "https://chat.whatsapp.com/LeZ1SrloaRWBoA6pMNXk4J",
   secretEnabled: true,
   guestCounterEnabled: true,
   soundEnabled: true,
