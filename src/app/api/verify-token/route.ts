@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { eventConfig } from '@/config/eventConfig';
 import { VerifyTokenResponse, GuestData } from '@/types';
 import { TeamsService } from '@/lib/teamsService';
+import { getSpouseInfoByToken } from '@/config/couplesConfig';
 
 function formatTokenToName(rawToken: string): string {
   if (!rawToken || rawToken.toUpperCase() === 'DEMO') return '';
@@ -18,7 +19,10 @@ export async function GET(request: Request) {
   const rawToken = searchParams.get('token') || 'DEMO';
   const token = rawToken.toUpperCase();
 
-  // Check if this token is already enrolled in any team in the database
+  // Check if this token matches a pre-registered guest in couplesConfig
+  const coupleInfo = getSpouseInfoByToken(rawToken);
+
+  // Check if this token or guest is already enrolled in any team in the database
   const adminData = await TeamsService.getAdminTeamsData();
   let existingMember = undefined;
   let enrolledTeamName = undefined;
@@ -26,7 +30,11 @@ export async function GET(request: Request) {
 
   for (const team of adminData.teams) {
     const member = team.members.find(
-      (m) => m.token.toUpperCase() === token || m.nombreMortal.toLowerCase() === rawToken.toLowerCase()
+      (m) =>
+        m.token.toUpperCase() === token ||
+        (coupleInfo && m.token.toUpperCase() === coupleInfo.me.token.toUpperCase()) ||
+        (coupleInfo && m.nombreMortal.toLowerCase().trim() === coupleInfo.me.name.toLowerCase().trim()) ||
+        m.nombreMortal.toLowerCase().trim() === rawToken.toLowerCase().trim()
     );
     if (member) {
       existingMember = member;
@@ -36,13 +44,21 @@ export async function GET(request: Request) {
     }
   }
 
-  const nameFormatted = existingMember?.nombreMortal || formatTokenToName(rawToken);
+  const nameFormatted =
+    existingMember?.nombreMortal ||
+    coupleInfo?.me.name ||
+    formatTokenToName(rawToken);
+
+  const guestGender =
+    existingMember?.genero ||
+    coupleInfo?.me.gender ||
+    'masculino';
 
   const guest: GuestData = {
-    token,
+    token: coupleInfo ? coupleInfo.me.token : token,
     nombre: nameFormatted || undefined,
     alias: existingMember?.aliasBrujo,
-    genero: existingMember?.genero,
+    genero: guestGender,
     equipoId: enrolledTeamId,
     equipoNombre: enrolledTeamName,
     estado: existingMember ? 'EQUIPO_SELECCIONADO' : 'CREADA',
@@ -51,9 +67,17 @@ export async function GET(request: Request) {
     whatsappDesbloqueado: !!existingMember,
   };
 
-  const response: VerifyTokenResponse = {
+  const response = {
     valid: true,
+    isSealed: !!existingMember,
     guest,
+    spouse: coupleInfo
+      ? {
+          name: coupleInfo.spouse.name,
+          token: coupleInfo.spouse.token,
+          gender: coupleInfo.spouse.gender,
+        }
+      : undefined,
     soulCount: 24 + adminData.totalPlayers,
   };
 

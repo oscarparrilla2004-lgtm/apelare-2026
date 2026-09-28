@@ -69,6 +69,11 @@ export interface TeamsOverviewResponse {
   success: boolean;
   totalPlayers: number;
   maxTotalCapacity: number;
+  spouseExclusionInfo?: {
+    spouseName: string;
+    spouseTeamId: string;
+    spouseTeamName: string;
+  };
   teams: {
     id: string;
     name: string;
@@ -81,6 +86,8 @@ export interface TeamsOverviewResponse {
     maxMembers: number;
     currentCount: number;
     isFull: boolean;
+    isExcludedForSpouse?: boolean;
+    spouseName?: string;
   }[];
 }
 

@@ -21,11 +21,12 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
   gender = 'masculino',
   onComplete,
 }) => {
-  const [teams, setTeams] = useState(
+  const [teams, setTeams] = useState<TeamsOverviewResponse['teams']>(
     TEAMS_CONFIG.map((t) => ({
       ...t,
       currentCount: 0,
       isFull: false,
+      isExcludedForSpouse: false,
     }))
   );
   const [totalPlayers, setTotalPlayers] = useState(0);
@@ -36,18 +37,27 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [spouseExclusionInfo, setSpouseExclusionInfo] = useState<{
+    spouseName: string;
+    spouseTeamId: string;
+    spouseTeamName: string;
+  } | null>(null);
+
   const fetchTeams = useCallback(async () => {
     try {
-      const res = await fetch('/api/teams', { cache: 'no-store' });
+      const res = await fetch(`/api/teams?token=${encodeURIComponent(token)}`, { cache: 'no-store' });
       const data: TeamsOverviewResponse = await res.json();
       if (data.success && data.teams) {
         setTeams(data.teams);
         setTotalPlayers(data.totalPlayers);
+        if (data.spouseExclusionInfo) {
+          setSpouseExclusionInfo(data.spouseExclusionInfo);
+        }
       }
     } catch {
       // Fallback
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchTeams();
@@ -55,13 +65,15 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
     return () => clearInterval(interval);
   }, [fetchTeams]);
 
-  // 🔮 Asignación aleatoria obligatoria por el Oráculo del Caldero
+  // 🔮 Asignación aleatoria obligatoria por el Oráculo del Caldero (excluyendo clanes llenos y el de la pareja)
   const handleConsultOracle = () => {
     if (isSpinning || isSuccess || isLoading) return;
 
-    const availableTeams = teams.filter((t) => !t.isFull && t.currentCount < MAX_PLAYERS_PER_TEAM);
+    const availableTeams = teams.filter(
+      (t) => !t.isFull && t.currentCount < MAX_PLAYERS_PER_TEAM && !t.isExcludedForSpouse
+    );
     if (availableTeams.length === 0) {
-      setErrorMsg('Todos los clanes están completos.');
+      setErrorMsg('No hay clanes con plazas disponibles para tu destino.');
       return;
     }
 
@@ -185,12 +197,22 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
             {guestName} <span className="text-amber-400 italic font-medium">«{witchNickname}»</span>
           </p>
         )}
+
+        {spouseExclusionInfo && (
+          <div className="w-full mt-1.5 px-3 py-1.5 rounded-xl bg-purple-950/70 border border-purple-500/50 text-[10px] text-purple-200 font-sans tracking-wide flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.3)] animate-fade-in">
+            <span>⚔️</span>
+            <span>
+              Ley del Akelarre: <strong>{spouseExclusionInfo.spouseName}</strong> está en <em>{spouseExclusionInfo.spouseTeamName}</em>. Tu destino será un clan rival.
+            </span>
+          </div>
+        )}
       </div>
 
       {/* 6 CLANS COMPACT 2-COLUMN GRID */}
       <div className="grid grid-cols-2 gap-2 my-auto w-full max-w-md z-20">
         {teams.map((team) => {
           const isHighlighted = activeHighlightId === team.id;
+          const isExcluded = team.isExcludedForSpouse;
           const isFull = team.isFull || team.currentCount >= MAX_PLAYERS_PER_TEAM;
           const isMyClan = assignedTeam?.id === team.id;
 
@@ -202,6 +224,8 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
                   ? 'bg-gradient-to-r from-amber-950 via-amber-900/60 to-amber-950 border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.8)] scale-105 z-30'
                   : isHighlighted
                   ? 'bg-amber-950/90 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.7)] scale-105 z-20'
+                  : isExcluded
+                  ? 'bg-black/40 border-purple-900/40 opacity-40 grayscale-[40%]'
                   : isFull
                   ? 'bg-black/50 border-red-950/60 opacity-40'
                   : 'bg-black/80 border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.8)]'
@@ -212,6 +236,8 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
                 className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center text-lg border ${
                   isMyClan || isHighlighted
                     ? 'border-amber-400 bg-black/80 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                    : isExcluded
+                    ? 'border-purple-500/30 bg-black/60 text-purple-300'
                     : 'border-white/10 bg-black/60'
                 }`}
               >
@@ -224,20 +250,35 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
                   <h3 className={`text-[11px] font-gothic font-bold leading-tight uppercase ${team.color}`}>
                     {team.name}
                   </h3>
-                  {isFull && <Lock className="w-2.5 h-2.5 text-red-400 shrink-0 mt-0.5" />}
-                  {isMyClan && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 stroke-[3]" />}
+                  {isExcluded ? (
+                    <span className="text-[9px] px-1 py-0.2 rounded bg-purple-950 border border-purple-500 text-purple-300 font-bold shrink-0">
+                      PAREJA
+                    </span>
+                  ) : isFull ? (
+                    <Lock className="w-2.5 h-2.5 text-red-400 shrink-0 mt-0.5" />
+                  ) : isMyClan ? (
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 stroke-[3]" />
+                  ) : null}
                 </div>
 
                 {/* Slots Count */}
                 <div className="flex items-center justify-between text-[9px] font-sans tracking-wider pt-0.5 text-white/50">
-                  <span>{isFull ? 'COMPLETO' : `${team.currentCount}/${MAX_PLAYERS_PER_TEAM} almas`}</span>
+                  <span>
+                    {isExcluded
+                      ? `Clan de ${team.spouseName || 'pareja'}`
+                      : isFull
+                      ? 'COMPLETO'
+                      : `${team.currentCount}/${MAX_PLAYERS_PER_TEAM} almas`}
+                  </span>
                 </div>
 
                 {/* Mini Progress Bar */}
                 <div className="w-full bg-black/80 rounded-full h-1 mt-1 overflow-hidden border border-white/10">
                   <div
                     className={`h-full rounded-full transition-all duration-300 ${
-                      isFull
+                      isExcluded
+                        ? 'bg-purple-700'
+                        : isFull
                         ? 'bg-red-600'
                         : isMyClan || isHighlighted
                         ? 'bg-gradient-to-r from-amber-400 to-yellow-300'

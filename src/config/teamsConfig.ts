@@ -69,5 +69,5 @@ export const TEAMS_CONFIG: TeamDefinition[] = [
   },
 ];
 
-export const TOTAL_MAX_PLAYERS = 40;
+export const TOTAL_MAX_PLAYERS = 42;
 export const MAX_PLAYERS_PER_TEAM = 7;

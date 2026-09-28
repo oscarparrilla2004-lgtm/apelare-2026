@@ -35,7 +35,16 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
         if (data.valid) {
           setGuest(data.guest);
           if (data.guest?.nombre) setGuestName(data.guest.nombre);
+          if (data.guest?.genero) setGender(data.guest.genero);
           if (data.soulCount) setSoulCount(data.soulCount);
+
+          // Single-use token protection: if already registered, show VIP pass directly
+          if (data.isSealed || data.guest?.estado === 'EQUIPO_SELECCIONADO') {
+            if (data.guest?.alias) setWitchNickname(data.guest.alias);
+            if (data.guest?.equipoId) setSelectedTeamId(data.guest.equipoId);
+            if (data.guest?.equipoNombre) setSelectedTeamName(data.guest.equipoNombre);
+            setCurrentStep('REWARD');
+          }
         }
       })
       .catch(() => {

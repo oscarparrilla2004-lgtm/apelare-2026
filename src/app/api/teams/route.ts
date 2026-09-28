@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { TeamsService } from '@/lib/teamsService';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const overview = await TeamsService.getTeamsOverview();
+    const { searchParams } = new URL(request.url);
+    const token = searchParams.get('token') || undefined;
+    const overview = await TeamsService.getTeamsOverview(token);
     return NextResponse.json(overview);
   } catch (error) {
     return NextResponse.json(

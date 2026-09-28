@@ -59,18 +59,50 @@ async function saveTeamsData(data: StoredTeamsData): Promise<void> {
   await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+import { getSpouseInfoByToken } from '@/config/couplesConfig';
+
 export class TeamsService {
   /**
-   * Obtiene la lista completa de equipos con sus estados para los usuarios
+   * Obtiene la lista completa de equipos con sus estados para los usuarios,
+   * excluyendo el clan de su pareja si ya está inscrita.
    */
-  static async getTeamsOverview(): Promise<TeamsOverviewResponse> {
+  static async getTeamsOverview(token?: string): Promise<TeamsOverviewResponse> {
     const data = await ensureDataFile();
     let totalPlayers = 0;
+
+    // Buscar si el participante tiene pareja y si dicha pareja ya está en algún clan
+    let spouseClanId: string | null = null;
+    let spouseClanName: string | null = null;
+    let spouseName: string | null = null;
+
+    if (token) {
+      const spouseInfo = getSpouseInfoByToken(token);
+      if (spouseInfo) {
+        spouseName = spouseInfo.spouse.name;
+        const spouseToken = spouseInfo.spouse.token.toUpperCase();
+        const spouseNormalizedName = spouseInfo.spouse.name.toLowerCase().trim();
+
+        for (const [tid, members] of Object.entries(data.members)) {
+          const hasSpouse = members.some(
+            (m) =>
+              m.token.toUpperCase() === spouseToken ||
+              m.nombreMortal.toLowerCase().trim() === spouseNormalizedName
+          );
+          if (hasSpouse) {
+            spouseClanId = tid;
+            const teamDef = TEAMS_CONFIG.find((t) => t.id === tid);
+            spouseClanName = teamDef?.name || tid;
+            break;
+          }
+        }
+      }
+    }
 
     const teams = TEAMS_CONFIG.map((def) => {
       const members = data.members[def.id] || [];
       const currentCount = members.length;
       totalPlayers += currentCount;
+      const isExcludedForSpouse = spouseClanId === def.id;
 
       return {
         id: def.id,
@@ -84,6 +116,8 @@ export class TeamsService {
         maxMembers: def.maxMembers,
         currentCount,
         isFull: currentCount >= def.maxMembers,
+        isExcludedForSpouse,
+        spouseName: isExcludedForSpouse && spouseName ? spouseName : undefined,
       };
     });
 
@@ -91,6 +125,14 @@ export class TeamsService {
       success: true,
       totalPlayers,
       maxTotalCapacity: TOTAL_MAX_PLAYERS,
+      spouseExclusionInfo:
+        spouseClanId && spouseClanName && spouseName
+          ? {
+              spouseName,
+              spouseTeamId: spouseClanId,
+              spouseTeamName: spouseClanName,
+            }
+          : undefined,
       teams,
     };
   }
@@ -124,7 +166,7 @@ export class TeamsService {
   }
 
   /**
-   * Une a un participante a un equipo validando capacidad máxima (6)
+   * Une a un participante a un equipo validando capacidad máxima (7) y anti-colisión de parejas
    */
   static async joinTeam(params: {
     teamId: string;
@@ -142,7 +184,28 @@ export class TeamsService {
 
     const data = await ensureDataFile();
 
-    // 1. Eliminar al jugador de cualquier otro equipo si ya estaba inscrito para evitar duplicados
+    // 1. Validar separación de parejas (Anti-Collision)
+    const spouseInfo = getSpouseInfoByToken(token);
+    if (spouseInfo) {
+      const spouseToken = spouseInfo.spouse.token.toUpperCase();
+      const spouseNormalizedName = spouseInfo.spouse.name.toLowerCase().trim();
+      const targetTeamMembers = data.members[teamId] || [];
+
+      const spouseInTargetTeam = targetTeamMembers.some(
+        (m) =>
+          m.token.toUpperCase() === spouseToken ||
+          m.nombreMortal.toLowerCase().trim() === spouseNormalizedName
+      );
+
+      if (spouseInTargetTeam) {
+        return {
+          success: false,
+          message: `Tu pareja (${spouseInfo.spouse.name}) ya está en el clan ${teamDef.name}. El Akelarre exige separación de parejas. Por favor, elige otro clan.`,
+        };
+      }
+    }
+
+    // 2. Eliminar al jugador de cualquier otro equipo si ya estaba inscrito para evitar duplicados
     for (const tid of Object.keys(data.members)) {
       data.members[tid] = data.members[tid].filter(
         (m) =>
@@ -151,7 +214,7 @@ export class TeamsService {
       );
     }
 
-    // 2. Comprobar si el equipo destino está lleno
+    // 3. Comprobar si el equipo destino está lleno
     const targetMembers = data.members[teamId] || [];
     if (targetMembers.length >= teamDef.maxMembers) {
       return {
@@ -160,7 +223,7 @@ export class TeamsService {
       };
     }
 
-    // 3. Crear el nuevo miembro
+    // 4. Crear el nuevo miembro
     const newMember: TeamMember = {
       id: `member_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       token: token.toUpperCase(),
