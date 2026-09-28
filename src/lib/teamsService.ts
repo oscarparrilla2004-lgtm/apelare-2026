@@ -252,6 +252,24 @@ export class TeamsService {
 
     const data = await ensureDataFile();
 
+    // 0. IDEMPOTENCY: Si el participante ya está en el equipo correcto, no hacer nada
+    const alreadyInTargetTeam = (data.members[teamId] || []).some(
+      (m) => m.token.toUpperCase() === token.toUpperCase()
+    );
+    if (alreadyInTargetTeam) {
+      const targetMembers = data.members[teamId] || [];
+      return {
+        success: true,
+        message: `Ya perteneces al clan ${teamDef.name}.`,
+        team: {
+          ...teamDef,
+          currentCount: targetMembers.length,
+          isFull: targetMembers.length >= teamDef.maxMembers,
+          members: targetMembers,
+        },
+      };
+    }
+
     // 1. Validar separación de parejas (Anti-Collision)
     const spouseInfo = getSpouseInfoByToken(token);
     if (spouseInfo) {
@@ -273,12 +291,11 @@ export class TeamsService {
       }
     }
 
-    // 2. Eliminar al jugador de cualquier otro equipo si ya estaba inscrito para evitar duplicados
+    // 2. Eliminar al jugador de cualquier otro equipo (solo por token, no por nombre)
     for (const tid of Object.keys(data.members)) {
+      if (tid === teamId) continue; // no tocar el equipo destino
       data.members[tid] = data.members[tid].filter(
-        (m) =>
-          m.token.toUpperCase() !== token.toUpperCase() &&
-          m.nombreMortal.toLowerCase().trim() !== nombreMortal.toLowerCase().trim()
+        (m) => m.token.toUpperCase() !== token.toUpperCase()
       );
     }
 
