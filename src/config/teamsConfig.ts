@@ -1,0 +1,73 @@
+import { TeamDefinition } from '@/types';
+
+export const TEAMS_CONFIG: TeamDefinition[] = [
+  {
+    id: 'pecadores_caldero',
+    name: 'Los Pecadores del Caldero',
+    tagline: 'Hierve la sangre, arde el deseo',
+    icon: '🔥',
+    color: 'text-amber-400',
+    borderColor: 'border-amber-500/60',
+    bgGradient: 'from-amber-950/80 via-[#1c120c] to-black/90',
+    glowColor: 'rgba(245, 158, 11, 0.4)',
+    maxMembers: 7,
+  },
+  {
+    id: 'akelarre_extasis',
+    name: 'Aquelarre del Éxtasis',
+    tagline: 'Vino rojo, placeres ocultos y sombras',
+    icon: '🍷',
+    color: 'text-rose-400',
+    borderColor: 'border-rose-500/60',
+    bgGradient: 'from-rose-950/80 via-[#1f0b14] to-black/90',
+    glowColor: 'rgba(225, 29, 72, 0.4)',
+    maxMembers: 7,
+  },
+  {
+    id: 'luna_roja',
+    name: 'Hijos de la Luna Roja',
+    tagline: 'Aullidos bajo el plenilunio prohibido',
+    icon: '🌙',
+    color: 'text-red-400',
+    borderColor: 'border-red-500/60',
+    bgGradient: 'from-red-950/80 via-[#1c080d] to-black/90',
+    glowColor: 'rgba(239, 68, 68, 0.4)',
+    maxMembers: 7,
+  },
+  {
+    id: 'placer_oscuro',
+    name: 'Hechiceros del Placer Oscuro',
+    tagline: 'Encantamientos y tentaciones de medianoche',
+    icon: '🖤',
+    color: 'text-gold',
+    borderColor: 'border-gold/70',
+    bgGradient: 'from-amber-950/60 via-[#19140a] to-black/90',
+    glowColor: 'rgba(212, 175, 55, 0.4)',
+    maxMembers: 7,
+  },
+  {
+    id: 'viboras_deseo',
+    name: 'Víboras del Deseo',
+    tagline: 'Veneno dulce, miradas letales y piel de seda',
+    icon: '🐍',
+    color: 'text-emerald-400',
+    borderColor: 'border-emerald-500/60',
+    bgGradient: 'from-emerald-950/80 via-[#0a1812] to-black/90',
+    glowColor: 'rgba(168, 85, 247, 0.4)',
+    maxMembers: 7,
+  },
+  {
+    id: 'vela_negra',
+    name: 'Secta de la Vela Negra',
+    tagline: 'Hasta que la cera queme la última sombra',
+    icon: '🕯️',
+    color: 'text-purple-400',
+    borderColor: 'border-purple-500/60',
+    bgGradient: 'from-purple-950/80 via-[#170921] to-black/90',
+    glowColor: 'rgba(168, 85, 247, 0.4)',
+    maxMembers: 7,
+  },
+];
+
+export const TOTAL_MAX_PLAYERS = 40;
+export const MAX_PLAYERS_PER_TEAM = 7;

@@ -1,0 +1,29 @@
+{
+  "members": {
+    "pecadores_caldero": [
+      {
+        "id": "member_1790622278388_1yx1t",
+        "token": "LAURA",
+        "nombreMortal": "Laura",
+        "aliasBrujo": "La Chamana",
+        "genero": "femenino",
+        "fechaRegistro": "2026-09-28T19:04:38.388Z"
+      }
+    ],
+    "akelarre_extasis": [],
+    "luna_roja": [],
+    "placer_oscuro": [],
+    "viboras_deseo": [
+      {
+        "id": "member_1788196300265_9jkkw",
+        "token": "DEMO",
+        "nombreMortal": "Antonio",
+        "aliasBrujo": "El Encantador",
+        "genero": "masculino",
+        "fechaRegistro": "2026-08-31T17:11:40.265Z"
+      }
+    ],
+    "vela_negra": []
+  },
+  "updatedAt": "2026-09-28T19:04:38.388Z"
+}
