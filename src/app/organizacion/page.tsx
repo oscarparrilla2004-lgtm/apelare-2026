@@ -27,6 +27,11 @@ export default function OrganizacionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'clanes' | 'parejas' | 'enlaces'>('clanes');
 
+  // Authentication State (Password = admin)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState(false);
+
   // Copy & Toast state
   const [copied, setCopied] = useState(false);
   const [copiedAllLinks, setCopiedAllLinks] = useState(false);
@@ -40,8 +45,33 @@ export default function OrganizacionPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setBaseUrl(window.location.origin);
+      const isAuth = localStorage.getItem('akelarre_admin_auth');
+      if (isAuth === 'true') {
+        setIsAuthenticated(true);
+      }
     }
   }, []);
+
+  const handleLogin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (passwordInput.trim().toLowerCase() === 'admin') {
+      setIsAuthenticated(true);
+      setAuthError(false);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('akelarre_admin_auth', 'true');
+      }
+      showToast('Acceso concedido al panel de Organización.');
+    } else {
+      setAuthError(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('akelarre_admin_auth');
+    }
+  };
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -218,6 +248,69 @@ export default function OrganizacionPage() {
   const totalWarlocks = data?.teams.reduce((acc, t) => acc + t.members.filter((m) => m.genero === 'masculino').length, 0) || 0;
   const fullTeamsCount = data?.teams.filter((t) => t.isFull).length || 0;
 
+  // If not authenticated, display password gate screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen w-full bg-akelarre-dark text-white font-sans flex flex-col items-center justify-center p-4 select-none relative overflow-hidden">
+        {/* Background ambient lighting */}
+        <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-950/30 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 max-w-sm w-full p-6 md:p-8 rounded-2xl bg-gradient-to-b from-[#1c110b] via-[#120a06] to-[#0a0503] border-2 border-gold/40 shadow-[0_0_50px_rgba(0,0,0,0.95)] text-center space-y-5 backdrop-blur-md">
+          <div className="w-14 h-14 rounded-full bg-black/80 border-2 border-gold flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(212,175,55,0.4)] text-2xl">
+            🔮
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-xl md:text-2xl font-gothic tracking-widest text-gold uppercase font-bold">
+              CÁMARA DEL ORGANIZADOR
+            </h2>
+            <p className="text-xs font-sans text-rose-200/70 italic">
+              Introduce la clave sagrada para acceder al control de clanes y parejas.
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-1 text-left">
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => {
+                  setPasswordInput(e.target.value);
+                  setAuthError(false);
+                }}
+                placeholder="Clave de acceso..."
+                autoFocus
+                className={`w-full px-4 py-3 rounded-xl bg-black/85 border ${
+                  authError ? 'border-red-500 animate-bounce-short' : 'border-gold/40 focus:border-gold'
+                } text-amber-100 font-sans tracking-widest text-center text-base focus:outline-none focus:ring-1 focus:ring-gold shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)]`}
+              />
+              {authError && (
+                <p className="text-xs text-red-400 font-sans text-center pt-1 font-semibold">
+                  Clave incorrecta. Solo el Guardián puede pasar.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-red-950 via-amber-900 to-red-950 border-2 border-gold text-gold font-gothic text-xs md:text-sm tracking-widest uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_25px_rgba(212,175,55,0.5)] cursor-pointer font-bold"
+            >
+              🔓 DESBLOQUEAR PANEL
+            </button>
+          </form>
+
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-gothic text-white/40 hover:text-white/80 transition-colors pt-2"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Volver a la invitación</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full bg-akelarre-dark text-white font-sans p-4 md:p-8 select-none">
       {/* Background ambient lighting */}
@@ -277,6 +370,14 @@ export default function OrganizacionPage() {
               title="Actualizar datos"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-gold' : ''}`} />
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="p-2.5 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 hover:bg-red-900/60 transition-all text-xs font-gothic cursor-pointer"
+              title="Cerrar sesión"
+            >
+              🔒 SALIR
             </button>
           </div>
         </div>
