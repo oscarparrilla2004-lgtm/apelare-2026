@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { soundEngine } from '@/lib/soundEngine';
 import { eventConfig } from '@/config/eventConfig';
-import { ArrowRight, Sparkles, Volume2, VolumeX, RotateCcw } from 'lucide-react';
+import { ArrowRight, Sparkles, Volume2, VolumeX, RotateCcw, Play } from 'lucide-react';
 
 interface PortalOpeningProps {
   onComplete: () => void;
@@ -19,11 +19,23 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
   const [showSecondText, setShowSecondText] = useState(false);
   const [isVideoEnded, setIsVideoEnded] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     // 1. Initial click and latch unlocking sound
     soundEngine.playMechanicalClack();
+
+    // Start video muted in background to prime decoder on mobile
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        // Will start when doors open
+      });
+    }
 
     // 2. Begin slow creaking open (Phase 1)
     const timer1 = setTimeout(() => {
@@ -37,7 +49,7 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
       soundEngine.playDoorStuck();
     }, 2000);
 
-    // 4. Force through the jam — doors swing wide open & video plays!
+    // 4. Force through the jam — doors swing wide open & video starts from 0:00!
     const timer3 = setTimeout(() => {
       setDoorStage('FORCE_OPEN');
       setIsEnteringMansion(true);
@@ -46,16 +58,30 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
 
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
-        const playPromise = videoRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
+        videoRef.current.muted = false;
+        videoRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+            setShowPlayOverlay(false);
+          })
+          .catch(() => {
+            // If browser blocks unmuted playback, try muted
             if (videoRef.current) {
               videoRef.current.muted = true;
               setIsMuted(true);
-              videoRef.current.play().catch(() => {});
+              videoRef.current
+                .play()
+                .then(() => {
+                  setIsPlaying(true);
+                })
+                .catch(() => {
+                  // Show play button if mobile totally blocked autoplay
+                  setShowPlayOverlay(true);
+                  setIsPlaying(false);
+                });
             }
           });
-        }
       }
     }, 4800);
 
@@ -86,7 +112,31 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
 
   const handleVideoEnded = () => {
     setIsVideoEnded(true);
+    setIsPlaying(false);
     soundEngine.duckAmbient(false);
+  };
+
+  const handleManualPlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.muted = false;
+    setIsMuted(false);
+    videoRef.current
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+        setShowPlayOverlay(false);
+        soundEngine.duckAmbient(true);
+      })
+      .catch(() => {
+        if (videoRef.current) {
+          videoRef.current.muted = true;
+          setIsMuted(true);
+          videoRef.current.play();
+          setIsPlaying(true);
+          setShowPlayOverlay(false);
+        }
+      });
   };
 
   const toggleMute = (e: React.MouseEvent) => {
@@ -102,6 +152,7 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
     if (!videoRef.current) return;
     videoRef.current.currentTime = 0;
     videoRef.current.play();
+    setIsPlaying(true);
     setIsVideoEnded(false);
     soundEngine.duckAmbient(true);
   };
@@ -136,9 +187,12 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-between min-h-screen w-full select-none z-10 overflow-hidden bg-black [perspective:1400px]">
+    <div
+      onClick={doorStage === 'FORCE_OPEN' || doorStage === 'OPEN' ? handleManualPlay : undefined}
+      className="relative flex flex-col items-center justify-between min-h-screen w-full select-none z-10 overflow-hidden bg-black [perspective:1400px]"
+    >
       {/* BACKGROUND: FULL-SCREEN CINEMATIC WITCHES VIDEO */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black flex items-center justify-center">
         <video
           ref={videoRef}
           src="/video/continua_con_otro_video_con_es.mp4"
@@ -166,12 +220,27 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
         {/* Ambient vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/80 pointer-events-none" />
 
+        {/* Big Center Golden Play Button if mobile blocked autoplay */}
+        {showPlayOverlay && (doorStage === 'FORCE_OPEN' || doorStage === 'OPEN') && !isVideoEnded && (
+          <div
+            onClick={handleManualPlay}
+            className="absolute inset-0 z-40 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 cursor-pointer animate-fade-in"
+          >
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-amber-500 via-gold to-yellow-400 border-2 border-white flex items-center justify-center shadow-[0_0_40px_rgba(245,158,11,0.95)] hover:scale-110 active:scale-95 transition-all">
+              <Play className="w-10 h-10 text-black fill-black ml-1" />
+            </div>
+            <span className="text-xs font-gothic tracking-widest text-amber-200 uppercase font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] bg-black/80 px-4 py-1.5 rounded-full border border-gold/40">
+              TOCA PARA VER EL RITUAL DE LAS BRUJAS
+            </span>
+          </div>
+        )}
+
         {/* Sound Toggle Control (Top Right) */}
-        {(doorStage === 'FORCE_OPEN' || doorStage === 'OPEN') && (
+        {(doorStage === 'FORCE_OPEN' || doorStage === 'OPEN') && !showPlayOverlay && (
           <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
             {isMuted && (
               <span className="text-[10px] font-sans bg-black/80 text-amber-300 px-2.5 py-1 rounded-full border border-gold/40 animate-pulse">
-                Toca para activar sonido 🔊
+                Toca para sonido 🔊
               </span>
             )}
             <button
@@ -263,7 +332,8 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
           isVideoEnded ? (
             <div className="w-full space-y-2.5 animate-fade-in text-center">
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (videoRef.current) {
                     videoRef.current.pause();
                   }
