@@ -242,7 +242,7 @@ export default function OrganizacionPage() {
 
   const handleCopySingleLink = (token: string, name: string) => {
     const url = `${baseUrl}/llave/${token}`;
-    const text = `🔮 ¡Hola ${name}! Has recibido tu Llave Sagrada para el *Akelarre de Brujas 2026* 🔥\n\nÁbrela aquí para sellar tu pacto y que el Oráculo te asigne tu clan secreto:\n👉 ${url}`;
+    const text = `🔮 ¡Hola ${name}! Has recibido tu Llave Sagrada para el *Akelarre de Brujas 2026* 🔥\n\nÁbrela aquí para sellar tu pacto y que el Oráculo te asigne tu clan secreto:\n👉 ${url}\n\n🔊 *¡Importante! Sube el volumen al máximo y disfruta de la experiencia* 🧙‍♀️✨`;
     navigator.clipboard.writeText(text);
     setCopiedLinkIndex(token);
     showToast(`Enlace y mensaje de ${name} copiado`);
