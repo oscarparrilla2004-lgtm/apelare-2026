@@ -1,270 +1,138 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import Image from 'next/image';
 import { soundEngine } from '@/lib/soundEngine';
 import { eventConfig } from '@/config/eventConfig';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Volume2, VolumeX, RotateCcw } from 'lucide-react';
 
 interface PortalOpeningProps {
   onComplete: () => void;
 }
 
-type DoorStage = 'CLOSED' | 'SLOW_CREAK' | 'STUCK' | 'FORCE_OPEN' | 'OPEN';
-
 export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
-  const [doorStage, setDoorStage] = useState<DoorStage>('CLOSED');
-  const [isEnteringMansion, setIsEnteringMansion] = useState(false);
-  const [showFirstText, setShowFirstText] = useState(false);
-  const [showSecondText, setShowSecondText] = useState(false);
-  const [showContinueButton, setShowContinueButton] = useState(false);
+  const [isVideoEnded, setIsVideoEnded] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // 1. Initial click and latch unlocking sound
-    soundEngine.playMechanicalClack();
+    // Duck background sound so the video sound is clear
+    soundEngine.duckAmbient(true);
 
-    // 2. Begin slow creaking open (Phase 1)
-    const timer1 = setTimeout(() => {
-      setDoorStage('SLOW_CREAK');
-      soundEngine.playDoorCreakInitial();
-    }, 400);
-
-    // 3. Door gets STUCK! (Phase 2 - 2.8s duration)
-    const timer2 = setTimeout(() => {
-      setDoorStage('STUCK');
-      soundEngine.playDoorStuck();
-    }, 1800);
-
-    // 4. Force through the jam — doors swing wide open, VIDEO STARTS!
-    const timer3 = setTimeout(() => {
-      setDoorStage('FORCE_OPEN');
-      setIsEnteringMansion(true);
-      soundEngine.playDoorForceOpen();
-
-      // Duck ambient music so video audio is clear
-      soundEngine.duckAmbient(true);
-
-      // Trigger video play on mobile
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        const playPromise = videoRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            if (videoRef.current) {
-              videoRef.current.muted = true;
-              videoRef.current.play().catch(() => {});
-            }
-          });
-        }
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.muted = false;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If browser blocks unmuted autoplay, play muted
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            setIsMuted(true);
+            videoRef.current.play().catch(() => {});
+          }
+        });
       }
-    }, 4600);
-
-    // 5. Door fully open
-    const timer4 = setTimeout(() => {
-      setDoorStage('OPEN');
-    }, 7200);
-
-    // 6. Narrative sequence
-    const timer5 = setTimeout(() => {
-      setShowFirstText(true);
-    }, 5400);
-
-    const timer6 = setTimeout(() => {
-      setShowSecondText(true);
-    }, 6800);
-
-    // 7. Safety fallback timer: Ensure the continue button ALWAYS appears after max 10s so nobody gets stuck
-    const timerSafety = setTimeout(() => {
-      setShowContinueButton(true);
-      soundEngine.duckAmbient(false);
-    }, 12000);
+    }
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
-      clearTimeout(timer5);
-      clearTimeout(timer6);
-      clearTimeout(timerSafety);
+      soundEngine.duckAmbient(false);
     };
-  }, []); // Run ONLY once on mount
+  }, []);
 
-  // Continue button appears when video ends
   const handleVideoEnded = () => {
-    setShowContinueButton(true);
+    setIsVideoEnded(true);
+    setIsPlaying(false);
     soundEngine.duckAmbient(false);
   };
 
-  const handleVideoError = () => {
-    setShowContinueButton(true);
-    soundEngine.duckAmbient(false);
-  };
-
-  // Door 3D transforms
-  const getLeftDoorStyles = () => {
-    switch (doorStage) {
-      case 'CLOSED':
-        return 'translate-x-0 [transform:rotateY(0deg)]';
-      case 'SLOW_CREAK':
-        return '-translate-x-[12%] [transform:rotateY(-20deg)] duration-[1300ms] ease-out';
-      case 'STUCK':
-        return '-translate-x-[14%] [transform:rotateY(-22deg)] duration-[150ms] animate-pulse';
-      case 'FORCE_OPEN':
-      case 'OPEN':
-        return '-translate-x-full [transform:rotateY(-85deg)] duration-[3200ms] cubic-bezier(0.2, 0.8, 0.2, 1) opacity-0';
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+      soundEngine.duckAmbient(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+      soundEngine.duckAmbient(false);
     }
   };
 
-  const getRightDoorStyles = () => {
-    switch (doorStage) {
-      case 'CLOSED':
-        return 'translate-x-0 [transform:rotateY(0deg)]';
-      case 'SLOW_CREAK':
-        return 'translate-x-[12%] [transform:rotateY(20deg)] duration-[1300ms] ease-out';
-      case 'STUCK':
-        return 'translate-x-[14%] [transform:rotateY(22deg)] duration-[150ms] animate-pulse';
-      case 'FORCE_OPEN':
-      case 'OPEN':
-        return 'translate-x-full [transform:rotateY(85deg)] duration-[3200ms] cubic-bezier(0.2, 0.8, 0.2, 1) opacity-0';
-    }
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    const next = !videoRef.current.muted;
+    videoRef.current.muted = next;
+    setIsMuted(next);
+  };
+
+  const handleReplay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = 0;
+    videoRef.current.play();
+    setIsPlaying(true);
+    setIsVideoEnded(false);
+    soundEngine.duckAmbient(true);
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-between min-h-screen w-full select-none z-10 overflow-hidden bg-black [perspective:1400px]">
-      {/* BACKGROUND: FULL CINEMATIC VIDEO WITH LIVE ATMOSPHERE */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
-        {/* Background Image Fallback so it's NEVER an empty void */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/coven_cauldron.jpg"
-            alt="Akelarre Cauldron"
-            fill
-            priority
-            className="object-cover object-center opacity-70"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80" />
-        </div>
-
-        <div
-          className={`absolute inset-0 transition-opacity duration-[1500ms] ease-in ${
-            doorStage === 'FORCE_OPEN' || doorStage === 'OPEN' ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {/* Full cinematic video */}
-          <video
-            ref={videoRef}
-            src="/video/continua_con_otro_video_con_es.mp4"
-            playsInline
-            muted
-            autoPlay
-            loop={false}
-            preload="auto"
-            onEnded={handleVideoEnded}
-            onError={handleVideoError}
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-[5000ms] ease-out ${
-              isEnteringMansion
-                ? 'scale-[1.12] brightness-105'
-                : 'scale-100 brightness-75'
-            }`}
-          />
-
-          {/* Dynamic Pulsing Cauldron Light & Living Embers Overlay */}
-          <div
-            className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${
-              isEnteringMansion ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              background:
-                'radial-gradient(circle at 50% 65%, rgba(52, 211, 153, 0.35) 0%, rgba(212, 175, 55, 0.20) 25%, transparent 65%)',
-            }}
-          />
-
-          {/* Cauldron Rising Emerald Steam & Smoke Animation */}
-          <div className="absolute bottom-1/4 inset-x-0 h-56 bg-gradient-to-t from-emerald-950/40 via-emerald-900/20 to-transparent pointer-events-none animate-pulse-slow mix-blend-screen" />
-
-          {/* Ambient vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/80 pointer-events-none" />
-
-          {/* Floor mystical fog */}
-          <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-black via-red-950/30 to-transparent pointer-events-none animate-pulse-slow" />
-        </div>
-      </div>
-
-      {/* LEFT HEAVY OAK & IRON MANSION DOOR */}
+    <div className="relative flex flex-col items-center justify-between min-h-screen w-full select-none z-10 overflow-hidden bg-black">
+      {/* FULL-SCREEN CINEMATIC WITCHES VIDEO */}
       <div
-        className={`absolute top-0 bottom-0 left-0 w-1/2 z-30 transition-all origin-left border-r-2 border-black/80 shadow-[20px_0_60px_rgba(0,0,0,0.98)] overflow-hidden ${getLeftDoorStyles()}`}
+        onClick={togglePlay}
+        className="absolute inset-0 z-0 overflow-hidden bg-black flex items-center justify-center cursor-pointer"
       >
-        <div className="absolute top-0 bottom-0 left-0 w-[200%] h-full">
-          <Image
-            src="/images/mansion_doors_closed.jpg"
-            alt="Portón de la Mansión Izquierdo"
-            fill
-            priority
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-black/25 pointer-events-none" />
-          <div className="absolute top-0 bottom-0 right-1/2 w-4 bg-gradient-to-l from-black/80 to-transparent pointer-events-none" />
+        <video
+          ref={videoRef}
+          src="/video/continua_con_otro_video_con_es.mp4"
+          playsInline
+          autoPlay
+          preload="auto"
+          onEnded={handleVideoEnded}
+          className="w-full h-full object-cover object-center"
+        />
+
+        {/* Ambient Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/80 pointer-events-none" />
+
+        {/* Sound Toggle Control (Top Right) */}
+        <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
+          {isMuted && (
+            <span className="text-[10px] font-sans bg-black/80 text-amber-300 px-2.5 py-1 rounded-full border border-gold/40 animate-pulse">
+              Toca para activar sonido 🔊
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={toggleMute}
+            className="p-2.5 rounded-full bg-black/80 border border-gold/50 text-gold hover:bg-gold/20 transition-all shadow-[0_0_15px_rgba(212,175,55,0.4)] cursor-pointer"
+            title={isMuted ? 'Activar sonido' : 'Silenciar'}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-gold" />}
+          </button>
         </div>
       </div>
 
-      {/* RIGHT HEAVY OAK & IRON MANSION DOOR */}
-      <div
-        className={`absolute top-0 bottom-0 right-0 w-1/2 z-30 transition-all origin-right border-l-2 border-black/80 shadow-[-20px_0_60px_rgba(0,0,0,0.98)] overflow-hidden ${getRightDoorStyles()}`}
-      >
-        <div className="absolute top-0 bottom-0 right-0 w-[200%] h-full">
-          <Image
-            src="/images/mansion_doors_closed.jpg"
-            alt="Portón de la Mansión Derecho"
-            fill
-            priority
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-black/25 pointer-events-none" />
-          <div className="absolute top-0 bottom-0 right-1/2 w-4 bg-gradient-to-r from-black/80 to-transparent pointer-events-none" />
+      {/* TOP HEADER OVERLAY */}
+      <div className="relative z-20 flex flex-col items-center text-center px-4 mt-8 space-y-1 pointer-events-none">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 border border-gold/40 text-gold text-[10px] font-sans tracking-widest uppercase backdrop-blur-md">
+          <Sparkles className="w-3 h-3 text-gold animate-spin-slow" />
+          <span>EL CÍRCULO TE OBSERVA</span>
         </div>
+        <h2 className="text-xl md:text-3xl font-gothic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-gold to-amber-600 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] uppercase font-bold">
+          {eventConfig.texts.portalCrossed}
+        </h2>
+        <p className="text-xs md:text-sm font-sans tracking-wider text-rose-100/90 italic drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] bg-black/60 backdrop-blur-md py-1 px-3 rounded-lg border border-gold/20">
+          «Las brujas y los brujos te invitan a unirte al caldero...»
+        </p>
       </div>
 
-      {/* TENSION / STUCK DOOR WARNING */}
-      {doorStage === 'STUCK' && (
-        <div className="relative z-40 my-auto text-center px-4 animate-fade-in pointer-events-none max-w-md w-full">
-          <div className="p-4 rounded-2xl bg-black/90 border-2 border-red-700/80 text-center shadow-[0_0_35px_rgba(185,28,28,0.8)] backdrop-blur-md space-y-1.5 animate-pulse">
-            <div className="flex items-center justify-center gap-2 text-red-400 font-gothic tracking-widest text-sm md:text-base font-bold uppercase">
-              <span>⚔️</span>
-              <span>¡PORTÓN ATASCADO!</span>
-              <span>⚔️</span>
-            </div>
-            <p className="text-xs md:text-sm font-sans tracking-wide text-amber-200/90">
-              La pesada madera de roble y los herrajes oponen resistencia...
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* ATMOSPHERIC NARRATIVE OVERLAY ONCE INSIDE MANSION */}
-      <div className="relative z-20 flex flex-col items-center text-center px-6 my-auto space-y-4 max-w-lg">
-        {showFirstText && (
-          <div className="space-y-1 animate-fade-in">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold text-[10px] font-sans tracking-widest uppercase backdrop-blur-md">
-              <Sparkles className="w-3 h-3 text-gold animate-spin-slow" />
-              <span>EL CÍRCULO TE OBSERVA</span>
-            </div>
-            <h2 className="text-2xl md:text-4xl font-gothic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-gold to-amber-600 drop-shadow-[0_0_25px_rgba(212,175,55,0.9)] uppercase pt-1 font-bold">
-              {eventConfig.texts.portalCrossed}
-            </h2>
-          </div>
-        )}
-
-        {showSecondText && (
-          <p className="text-xs md:text-base font-sans tracking-wider text-rose-100/90 italic animate-fade-in drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] bg-black/60 backdrop-blur-md py-1.5 px-4 rounded-xl border border-gold/30">
-            «Las brujas y los brujos te invitan a unirte al caldero...»
-          </p>
-        )}
-
-        {/* Continue Button: stays visible inviting to advance */}
-        {showContinueButton && (
-          <div className="pt-4 animate-fade-in z-30 w-full max-w-xs">
+      {/* BOTTOM ACTION: Button appears ONLY when the video has ended 100% */}
+      <div className="relative z-30 mb-8 w-full max-w-sm px-6 flex flex-col items-center space-y-3">
+        {isVideoEnded ? (
+          <div className="w-full space-y-2.5 animate-fade-in text-center">
             <button
               onClick={() => {
                 if (videoRef.current) {
@@ -274,11 +142,24 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
                 onComplete();
               }}
               style={{ backgroundColor: '#f59e0b', color: '#000000' }}
-              className="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-full border-2 border-white font-sans font-black text-sm tracking-wider uppercase hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_35px_rgba(245,158,11,0.95)] cursor-pointer"
+              className="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-full border-2 border-white font-sans font-black text-sm md:text-base tracking-wider uppercase hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_35px_rgba(245,158,11,0.95)] cursor-pointer"
             >
-              <span>ACERCARSE AL CALDERO</span>
+              <span className="font-extrabold">ACERCARSE AL CALDERO</span>
               <ArrowRight className="w-5 h-5 text-black stroke-[3]" />
             </button>
+
+            <button
+              type="button"
+              onClick={handleReplay}
+              className="inline-flex items-center gap-1.5 text-xs text-amber-200/70 hover:text-amber-100 transition-colors font-sans underline pt-1 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Volver a ver el vídeo</span>
+            </button>
+          </div>
+        ) : (
+          <div className="py-2 px-4 rounded-full bg-black/60 border border-white/10 text-[11px] text-amber-200/60 font-sans tracking-wider animate-pulse pointer-events-none backdrop-blur-md">
+            🕯️ Observa el ritual del caldero...
           </div>
         )}
       </div>
