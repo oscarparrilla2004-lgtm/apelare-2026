@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
+import Redis from 'ioredis';
 import { TEAMS_CONFIG, MAX_PLAYERS_PER_TEAM, TOTAL_MAX_PLAYERS } from '@/config/teamsConfig';
 import { TeamMember, TeamState, TeamsOverviewResponse, AdminTeamsDataResponse } from '@/types';
 
@@ -8,7 +9,34 @@ const DATA_DIR = isVercel ? path.join('/tmp', 'data') : path.join(process.cwd(),
 const DATA_FILE = path.join(DATA_DIR, 'teams_data.json');
 const BUNDLED_DATA_FILE = path.join(process.cwd(), 'data', 'teams_data.json');
 
-function getRedisCredentials() {
+const REDIS_KEY = 'akelarre_2026_teams';
+
+let ioredisInstance: Redis | null = null;
+
+function getIORedis(): Redis | null {
+  const env = process.env;
+  const redisUrl = env.REDIS_URL || env.KV_URL || env.STORAGE_URL;
+  if (!redisUrl) return null;
+
+  if (!ioredisInstance) {
+    try {
+      ioredisInstance = new Redis(redisUrl, {
+        connectTimeout: 7000,
+        maxRetriesPerRequest: 3,
+        lazyConnect: false,
+      });
+      ioredisInstance.on('error', (err) => {
+        console.error('[TeamsService] IORedis error:', err);
+      });
+    } catch (e) {
+      console.error('[TeamsService] Could not init IORedis:', e);
+      return null;
+    }
+  }
+  return ioredisInstance;
+}
+
+function getRedisRestCredentials() {
   const env = process.env;
   let url = env.UPSTASH_REDIS_REST_URL || env.KV_REST_API_URL || env.STORAGE_REST_API_URL;
   let token = env.UPSTASH_REDIS_REST_TOKEN || env.KV_REST_API_TOKEN || env.STORAGE_REST_API_TOKEN;
@@ -22,8 +50,6 @@ function getRedisCredentials() {
 
   return { url, token };
 }
-
-const REDIS_KEY = 'akelarre_2026_teams';
 
 interface StoredTeamsData {
   members: Record<string, TeamMember[]>; // teamId -> TeamMember[]
@@ -45,25 +71,13 @@ function createEmptyData(): StoredTeamsData {
 }
 
 async function ensureDataFile(): Promise<StoredTeamsData> {
-  const { url: redisUrl, token: redisToken } = getRedisCredentials();
-
-  // 1. Try Cloud Redis (Upstash / Vercel KV) if connected — this is the ONLY source of truth
-  if (redisUrl && redisToken) {
+  // 1. Try TCP Redis with ioredis (REDIS_URL)
+  const ioClient = getIORedis();
+  if (ioClient) {
     try {
-      const res = await fetch(`${redisUrl}/get/${REDIS_KEY}`, {
-        headers: { Authorization: `Bearer ${redisToken}` },
-        cache: 'no-store',
-      });
-
-      if (!res.ok) {
-        throw new Error(`Redis HTTP error: ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      if (data.result) {
-        // Key exists and has data — parse and return it
-        const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+      const raw = await ioClient.get(REDIS_KEY);
+      if (raw) {
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
         for (const team of TEAMS_CONFIG) {
           if (!parsed.members[team.id]) {
             parsed.members[team.id] = [];
@@ -71,19 +85,42 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
         }
         return parsed;
       } else {
-        // Key doesn't exist yet in Redis — return empty WITHOUT saving (prevents wiping on transient null)
-        const fresh = createEmptyData();
-        return fresh;
+        return createEmptyData();
       }
     } catch (err) {
-      // Redis error — do NOT fall through to file (file is always empty on Vercel /tmp cold starts)
-      // Return empty data in memory only — do NOT save it to Redis
-      console.error('[TeamsService] Redis read error, returning in-memory empty:', err);
-      return createEmptyData();
+      console.error('[TeamsService] IORedis read error:', err);
     }
   }
 
-  // 2. Local dev fallback only (not used on Vercel since Redis credentials are always present)
+  // 2. Try Cloud Redis REST (Upstash / Vercel KV REST)
+  const { url: redisUrl, token: redisToken } = getRedisRestCredentials();
+  if (redisUrl && redisToken) {
+    try {
+      const res = await fetch(`${redisUrl}/get/${REDIS_KEY}`, {
+        headers: { Authorization: `Bearer ${redisToken}` },
+        cache: 'no-store',
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.result) {
+          const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+          for (const team of TEAMS_CONFIG) {
+            if (!parsed.members[team.id]) {
+              parsed.members[team.id] = [];
+            }
+          }
+          return parsed;
+        } else {
+          return createEmptyData();
+        }
+      }
+    } catch (err) {
+      console.error('[TeamsService] Redis REST read error:', err);
+    }
+  }
+
+  // 3. Local dev fallback only
   try {
     await fs.mkdir(DATA_DIR, { recursive: true });
     let content: string;
@@ -107,11 +144,29 @@ async function ensureDataFile(): Promise<StoredTeamsData> {
 
 async function saveTeamsData(data: StoredTeamsData): Promise<void> {
   data.updatedAt = new Date().toISOString();
-  const { url: redisUrl, token: redisToken } = getRedisCredentials();
 
-  // Save to Cloud Redis — must succeed, throw if it doesn't
+  // 1. Save with IORedis (TCP)
+  const ioClient = getIORedis();
+  if (ioClient) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await ioClient.set(REDIS_KEY, JSON.stringify(data));
+        return; // Success
+      } catch (err) {
+        console.error(`[TeamsService] IORedis save attempt ${attempt}/3 failed:`, err);
+        if (attempt < 3) {
+          await new Promise((r) => setTimeout(r, 200 * attempt));
+        } else {
+          throw new Error(`IORedis save failed after 3 attempts: ${err}`);
+        }
+      }
+    }
+    return;
+  }
+
+  // 2. Save with Redis REST
+  const { url: redisUrl, token: redisToken } = getRedisRestCredentials();
   if (redisUrl && redisToken) {
-    // Retry up to 3 times on transient failures
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const res = await fetch(`${redisUrl}/set/${REDIS_KEY}`, {
@@ -127,23 +182,12 @@ async function saveTeamsData(data: StoredTeamsData): Promise<void> {
           const errText = await res.text().catch(() => '');
           throw new Error(`Redis SET failed HTTP ${res.status}: ${errText}`);
         }
-
-        const result = await res.json().catch(() => ({}));
-        if (result.error) {
-          throw new Error(`Redis SET error: ${result.error}`);
-        }
-
-        return; // ✅ Success
+        return; // Success
       } catch (err) {
         console.error(`[TeamsService] Redis save attempt ${attempt}/3 failed:`, err);
         if (attempt < 3) {
           await new Promise((r) => setTimeout(r, 200 * attempt));
         } else {
-          // All retries exhausted — fallback to local file only in dev
-          if (!process.env.VERCEL) {
-            await fs.mkdir(DATA_DIR, { recursive: true });
-            await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
-          }
           throw new Error(`Redis save failed after 3 attempts: ${err}`);
         }
       }
@@ -151,7 +195,7 @@ async function saveTeamsData(data: StoredTeamsData): Promise<void> {
     return;
   }
 
-  // Local dev fallback (no Redis configured)
+  // 3. Fallback to local file in dev
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
@@ -283,9 +327,9 @@ export class TeamsService {
 
     // Safety check: if data looks empty but Redis is configured, retry once
     // (prevents transient null from Redis overwriting all existing members)
-    const { url: redisUrl, token: redisToken } = getRedisCredentials();
+    const hasRedis = !!getIORedis() || !!getRedisRestCredentials().url;
     const totalMembers = Object.values(data.members).reduce((sum, m) => sum + m.length, 0);
-    if (totalMembers === 0 && redisUrl && redisToken) {
+    if (totalMembers === 0 && hasRedis) {
       await new Promise((r) => setTimeout(r, 250));
       data = await ensureDataFile();
     }
