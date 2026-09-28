@@ -18,12 +18,17 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
   const [showFirstText, setShowFirstText] = useState(false);
   const [showSecondText, setShowSecondText] = useState(false);
   const [isVideoEnded, setIsVideoEnded] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     // 1. Initial click and latch unlocking sound
     soundEngine.playMechanicalClack();
+
+    // Start video playback immediately so mobile decoder is primed
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
 
     // 2. Begin slow creaking open (Phase 1)
     const timer1 = setTimeout(() => {
@@ -37,23 +42,15 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
       soundEngine.playDoorStuck();
     }, 2000);
 
-    // 4. Force through the jam — doors swing wide open & video starts!
+    // 4. Force through the jam — doors swing wide open & video is revealed!
     const timer3 = setTimeout(() => {
       setDoorStage('FORCE_OPEN');
       setIsEnteringMansion(true);
       soundEngine.playDoorForceOpen();
       soundEngine.duckAmbient(true);
 
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.muted = false;
-        videoRef.current.play().catch(() => {
-          if (videoRef.current) {
-            videoRef.current.muted = true;
-            setIsMuted(true);
-            videoRef.current.play().catch(() => {});
-          }
-        });
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(() => {});
       }
     }, 4800);
 
@@ -85,6 +82,14 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
   const handleVideoEnded = () => {
     setIsVideoEnded(true);
     soundEngine.duckAmbient(false);
+  };
+
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return;
+    const dur = videoRef.current.duration;
+    if (dur && dur > 0 && videoRef.current.currentTime >= dur - 0.4) {
+      setIsVideoEnded(true);
+    }
   };
 
   const toggleMute = (e: React.MouseEvent) => {
@@ -139,16 +144,19 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
       <div className="absolute inset-0 z-0 overflow-hidden bg-black flex items-center justify-center">
         <video
           ref={videoRef}
-          src="/video/continua_con_otro_video_con_es.mp4"
           playsInline
           autoPlay
-          muted
+          muted={isMuted}
           preload="auto"
           onEnded={handleVideoEnded}
+          onTimeUpdate={handleTimeUpdate}
           className={`w-full h-full object-cover object-center transition-all duration-[4000ms] ease-out ${
             isEnteringMansion ? 'scale-105 brightness-105' : 'scale-100 brightness-75'
           }`}
-        />
+        >
+          <source src="/video/continua_con_otro_video_con_es.mp4" type="video/mp4" />
+          <source src="/Video/continua_con_otro_video_con_es.mp4" type="video/mp4" />
+        </video>
 
         {/* Dynamic Pulsing Cauldron Light & Living Embers Overlay */}
         <div
