@@ -24,60 +24,61 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
     // 1. Initial click and latch unlocking sound
     soundEngine.playMechanicalClack();
 
-    // Ensure video is paused at second 0 while doors are closed
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-
     // 2. Begin slow creaking open (Phase 1)
     const timer1 = setTimeout(() => {
       setDoorStage('SLOW_CREAK');
       soundEngine.playDoorCreakInitial();
     }, 400);
 
-    // 3. Door gets STUCK! (Phase 2 - 3.0s duration so message is completely legible)
+    // 3. Door gets STUCK! (Phase 2 - 2.8s duration)
     const timer2 = setTimeout(() => {
       setDoorStage('STUCK');
       soundEngine.playDoorStuck();
     }, 1800);
 
-    // 4. Force through the jam — doors swing wide open, VIDEO STARTS FROM SECOND 0:00!
+    // 4. Force through the jam — doors swing wide open, VIDEO STARTS!
     const timer3 = setTimeout(() => {
       setDoorStage('FORCE_OPEN');
       setIsEnteringMansion(true);
       soundEngine.playDoorForceOpen();
 
-      // Duck ambient music completely so the video's voice is crystal clear
+      // Duck ambient music so video audio is clear
       soundEngine.duckAmbient(true);
 
-      // Start video from the very beginning with audio
+      // Trigger video play on mobile
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
-        videoRef.current.muted = false;
-        videoRef.current.volume = 1.0;
-        videoRef.current.play().catch(() => {
-          if (videoRef.current) {
-            videoRef.current.muted = true;
-            videoRef.current.play();
-          }
-        });
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current.play().catch(() => {});
+            }
+          });
+        }
       }
-    }, 4800);
+    }, 4600);
 
-    // 5. Door fully open, camera pushed in
+    // 5. Door fully open
     const timer4 = setTimeout(() => {
       setDoorStage('OPEN');
-    }, 7800);
+    }, 7200);
 
     // 6. Narrative sequence
     const timer5 = setTimeout(() => {
       setShowFirstText(true);
-    }, 5600);
+    }, 5400);
 
     const timer6 = setTimeout(() => {
       setShowSecondText(true);
-    }, 7200);
+    }, 6800);
+
+    // 7. Safety fallback timer: Ensure the continue button ALWAYS appears after max 10s so nobody gets stuck
+    const timerSafety = setTimeout(() => {
+      setShowContinueButton(true);
+      soundEngine.duckAmbient(false);
+    }, 12000);
 
     return () => {
       clearTimeout(timer1);
@@ -86,11 +87,17 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
       clearTimeout(timer4);
       clearTimeout(timer5);
       clearTimeout(timer6);
+      clearTimeout(timerSafety);
     };
   }, []); // Run ONLY once on mount
 
-  // Continue button appears ONLY when the video of the witches has finished 100% of its duration
+  // Continue button appears when video ends
   const handleVideoEnded = () => {
+    setShowContinueButton(true);
+    soundEngine.duckAmbient(false);
+  };
+
+  const handleVideoError = () => {
     setShowContinueButton(true);
     soundEngine.duckAmbient(false);
   };
@@ -128,8 +135,20 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
     <div className="relative flex flex-col items-center justify-between min-h-screen w-full select-none z-10 overflow-hidden bg-black [perspective:1400px]">
       {/* BACKGROUND: FULL CINEMATIC VIDEO WITH LIVE ATMOSPHERE */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+        {/* Background Image Fallback so it's NEVER an empty void */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/coven_cauldron.jpg"
+            alt="Akelarre Cauldron"
+            fill
+            priority
+            className="object-cover object-center opacity-70"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80" />
+        </div>
+
         <div
-          className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in ${
+          className={`absolute inset-0 transition-opacity duration-[1500ms] ease-in ${
             doorStage === 'FORCE_OPEN' || doorStage === 'OPEN' ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -138,8 +157,11 @@ export const PortalOpening: React.FC<PortalOpeningProps> = ({ onComplete }) => {
             ref={videoRef}
             src="/video/continua_con_otro_video_con_es.mp4"
             playsInline
+            muted
+            autoPlay
             preload="auto"
             onEnded={handleVideoEnded}
+            onError={handleVideoError}
             className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-[5000ms] ease-out ${
               isEnteringMansion
                 ? 'scale-[1.12] brightness-105'
