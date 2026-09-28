@@ -109,24 +109,49 @@ async function saveTeamsData(data: StoredTeamsData): Promise<void> {
   data.updatedAt = new Date().toISOString();
   const { url: redisUrl, token: redisToken } = getRedisCredentials();
 
-  // Save to Cloud Redis if connected
+  // Save to Cloud Redis — must succeed, throw if it doesn't
   if (redisUrl && redisToken) {
-    try {
-      await fetch(`${redisUrl}/set/${REDIS_KEY}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${redisToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(JSON.stringify(data)),
-      });
-      return;
-    } catch {
-      // Fallback to file
+    // Retry up to 3 times on transient failures
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await fetch(`${redisUrl}/set/${REDIS_KEY}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${redisToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(JSON.stringify(data)),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text().catch(() => '');
+          throw new Error(`Redis SET failed HTTP ${res.status}: ${errText}`);
+        }
+
+        const result = await res.json().catch(() => ({}));
+        if (result.error) {
+          throw new Error(`Redis SET error: ${result.error}`);
+        }
+
+        return; // ✅ Success
+      } catch (err) {
+        console.error(`[TeamsService] Redis save attempt ${attempt}/3 failed:`, err);
+        if (attempt < 3) {
+          await new Promise((r) => setTimeout(r, 200 * attempt));
+        } else {
+          // All retries exhausted — fallback to local file only in dev
+          if (!process.env.VERCEL) {
+            await fs.mkdir(DATA_DIR, { recursive: true });
+            await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+          }
+          throw new Error(`Redis save failed after 3 attempts: ${err}`);
+        }
+      }
     }
+    return;
   }
 
-  // Fallback to file system
+  // Local dev fallback (no Redis configured)
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
@@ -254,7 +279,16 @@ export class TeamsService {
       return { success: false, message: 'El clan seleccionado no existe.' };
     }
 
-    const data = await ensureDataFile();
+    let data = await ensureDataFile();
+
+    // Safety check: if data looks empty but Redis is configured, retry once
+    // (prevents transient null from Redis overwriting all existing members)
+    const { url: redisUrl, token: redisToken } = getRedisCredentials();
+    const totalMembers = Object.values(data.members).reduce((sum, m) => sum + m.length, 0);
+    if (totalMembers === 0 && redisUrl && redisToken) {
+      await new Promise((r) => setTimeout(r, 250));
+      data = await ensureDataFile();
+    }
 
     // 0. IDEMPOTENCY: Si el participante ya está en el equipo correcto, no hacer nada
     const alreadyInTargetTeam = (data.members[teamId] || []).some(
