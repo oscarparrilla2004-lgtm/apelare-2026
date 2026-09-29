@@ -208,7 +208,7 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
       <div className="flex flex-col items-center text-center z-10 max-w-sm w-full space-y-1 mt-4">
         <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full border border-amber-500/30 bg-black/60 text-amber-300 text-[10px] font-sans tracking-widest uppercase">
           <span>🔮</span>
-          <span>ORÁCULO DE LOS 6 CLANES</span>
+          <span>ORÁCULO DE LOS 4 CLANES</span>
         </div>
 
         <h2 className="text-xl md:text-2xl font-gothic tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 uppercase font-bold">
@@ -231,8 +231,8 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
         )}
       </div>
 
-      {/* 6 CLANS COMPACT 2-COLUMN GRID */}
-      <div className="grid grid-cols-2 gap-2 my-auto w-full max-w-md z-20">
+      {/* 4 CLANS COMPACT 2-COLUMN GRID */}
+      <div className="grid grid-cols-2 gap-3 my-auto w-full max-w-md z-20">
         {teams.map((team) => {
           const isHighlighted = activeHighlightId === team.id;
           const isExcluded = team.isExcludedForSpouse;

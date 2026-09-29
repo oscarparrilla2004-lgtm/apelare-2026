@@ -362,7 +362,7 @@ export default function OrganizacionPage() {
               ORGANIZACIÓN DEL AKELARRE
             </h1>
             <p className="text-xs md:text-sm font-sans text-rose-200/70 italic">
-              Control en tiempo real de los 6 Clanes, 21 Parejas (42 Invitados) y Exportador Excel.
+              Control en tiempo real de los 4 Clanes (10 plazas c/u), 21 Parejas (42 Invitados) y Exportador Excel.
             </p>
           </div>
 
@@ -423,7 +423,7 @@ export default function OrganizacionPage() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>CLANES ({data?.totalPlayers || 0}/42)</span>
+            <span>CLANES ({data?.totalPlayers || 0}/{data?.maxTotalCapacity || 40})</span>
           </button>
 
           <button
@@ -460,12 +460,12 @@ export default function OrganizacionPage() {
                 <span className="text-[10px] font-sans tracking-widest text-gold/80 uppercase">TOTAL JUGADORES</span>
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-2xl md:text-3xl font-gothic font-bold text-amber-100">{data?.totalPlayers || 0}</span>
-                  <span className="text-xs text-white/40 font-sans">/ 42</span>
+                  <span className="text-xs text-white/40 font-sans">/ {data?.maxTotalCapacity || 40}</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden mt-2">
                   <div
                     className="h-full bg-gradient-to-r from-amber-500 to-gold rounded-full transition-all duration-500"
-                    style={{ width: `${((data?.totalPlayers || 0) / 42) * 100}%` }}
+                    style={{ width: `${((data?.totalPlayers || 0) / (data?.maxTotalCapacity || 40)) * 100}%` }}
                   />
                 </div>
               </div>
@@ -474,9 +474,9 @@ export default function OrganizacionPage() {
                 <span className="text-[10px] font-sans tracking-widest text-red-300/80 uppercase">CLANES COMPLETOS</span>
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-2xl md:text-3xl font-gothic font-bold text-red-400">{fullTeamsCount}</span>
-                  <span className="text-xs text-white/40 font-sans">/ 6 clanes</span>
+                  <span className="text-xs text-white/40 font-sans">/ 4 clanes</span>
                 </div>
-                <p className="text-[10px] font-sans text-rose-300/60 pt-1">{6 - fullTeamsCount} clanes con plazas</p>
+                <p className="text-[10px] font-sans text-rose-300/60 pt-1">{4 - fullTeamsCount} clanes con plazas</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-black/60 border border-purple-900/50 backdrop-blur-md space-y-1">
@@ -498,8 +498,8 @@ export default function OrganizacionPage() {
               </div>
             </div>
 
-            {/* 6 Clans Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* 4 Clans Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-5">
               {data?.teams.map((team) => {
                 return (
                   <div
@@ -821,7 +821,7 @@ export default function OrganizacionPage() {
 
             <h3 className="text-lg font-gothic text-red-400 uppercase font-bold">¿REINICIAR TODOS LOS CLANES A CERO?</h3>
             <p className="text-xs font-sans text-amber-100/90 leading-relaxed">
-              Esta acción vaciará todas las plazas registradas de los 6 clanes (0/42). Úsalo para dejar la aplicación completamente limpia antes de enviar los enlaces a tus invitados.
+              Esta acción vaciará todas las plazas registradas de los 4 clanes (0/40). Úsalo para dejar la aplicación completamente limpia antes de enviar los enlaces a tus invitados.
             </p>
 
             <div className="flex items-center gap-3 pt-2">

@@ -61,9 +61,7 @@ function createEmptyData(): StoredTeamsData {
     members: {
       pecadores_caldero: [],
       akelarre_extasis: [],
-      luna_roja: [],
       placer_oscuro: [],
-      viboras_deseo: [],
       vela_negra: [],
     },
     updatedAt: new Date().toISOString(),
@@ -443,9 +441,7 @@ export class TeamsService {
       members: {
         pecadores_caldero: [],
         akelarre_extasis: [],
-        luna_roja: [],
         placer_oscuro: [],
-        viboras_deseo: [],
         vela_negra: [],
       },
       updatedAt: new Date().toISOString(),
