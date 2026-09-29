@@ -262,10 +262,15 @@ export class TeamsService {
       };
     });
 
+    const takenNicknames: string[] = Object.values(data.members)
+      .flatMap((members) => members.map((m) => m.aliasBrujo))
+      .filter(Boolean);
+
     return {
       success: true,
       totalPlayers,
       maxTotalCapacity: TOTAL_MAX_PLAYERS,
+      takenNicknames,
       spouseExclusionInfo:
         spouseClanId && spouseClanName && spouseName
           ? {

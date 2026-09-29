@@ -29,9 +29,7 @@ export const Pact: React.FC<PactProps> = ({
   const [confirmedWarning, setConfirmedWarning] = useState(isAlreadySealed);
   const [isSealed, setIsSealed] = useState(isAlreadySealed);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [witchNickname, setWitchNickname] = useState(
-    initialWitchNickname || (initialGuestName ? generateWitchNickname(initialGuestName, detectGender(initialGuestName)) : '')
-  );
+  const [witchNickname, setWitchNickname] = useState(initialWitchNickname || '');
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
@@ -39,12 +37,12 @@ export const Pact: React.FC<PactProps> = ({
       setUserName(initialGuestName);
       setGender(detectGender(initialGuestName));
     }
+    if (initialWitchNickname) {
+      setWitchNickname(initialWitchNickname);
+    }
     if (isAlreadySealed) {
       setIsSealed(true);
       setConfirmedWarning(true);
-      if (initialWitchNickname) {
-        setWitchNickname(initialWitchNickname);
-      }
     }
   }, [initialGuestName, userName, isAlreadySealed, initialWitchNickname]);
 
@@ -75,18 +73,18 @@ export const Pact: React.FC<PactProps> = ({
     try {
       const res = await fetch('/api/teams', { cache: 'no-store' });
       const data = await res.json();
-      if (data.success && data.teams) {
-        // Extract all aliasBrujo values already assigned
-        usedNicknames = (data.teams as Array<{ members?: Array<{ aliasBrujo?: string }> }>)
-          .flatMap((t) => t.members || [])
-          .map((m) => m.aliasBrujo || '')
-          .filter(Boolean);
+      if (data.success && Array.isArray(data.takenNicknames)) {
+        usedNicknames = data.takenNicknames;
       }
     } catch {
-      // If fetch fails, fall back to simple hash (better than blocking the user)
+      // If fetch fails, fall back
     }
 
-    const nickname = generateUniqueWitchNickname(userName, gender, usedNicknames);
+    const nickname =
+      initialWitchNickname && !usedNicknames.map(n => n.toLowerCase().trim()).includes(initialWitchNickname.toLowerCase().trim())
+        ? initialWitchNickname
+        : generateUniqueWitchNickname(userName, gender, usedNicknames);
+
     setWitchNickname(nickname);
 
     soundEngine.playWaxSeal();

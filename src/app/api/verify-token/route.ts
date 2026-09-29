@@ -3,6 +3,7 @@ import { eventConfig } from '@/config/eventConfig';
 import { VerifyTokenResponse, GuestData } from '@/types';
 import { TeamsService } from '@/lib/teamsService';
 import { getSpouseInfoByToken } from '@/config/couplesConfig';
+import { generateUniqueWitchNickname } from '@/lib/witchNickname';
 
 function formatTokenToName(rawToken: string): string {
   if (!rawToken || rawToken.toUpperCase() === 'DEMO') return '';
@@ -44,6 +45,11 @@ export async function GET(request: Request) {
     }
   }
 
+  // Collect all taken nicknames currently in the database
+  const takenNicknames: string[] = adminData.teams
+    .flatMap((t) => t.members.map((m) => m.aliasBrujo))
+    .filter(Boolean);
+
   const nameFormatted =
     existingMember?.nombreMortal ||
     coupleInfo?.me.name ||
@@ -54,10 +60,15 @@ export async function GET(request: Request) {
     coupleInfo?.me.gender ||
     'masculino';
 
+  // If already registered, keep their alias; if new, compute a guaranteed unique alias
+  const assignedAlias =
+    existingMember?.aliasBrujo ||
+    generateUniqueWitchNickname(nameFormatted, guestGender, takenNicknames);
+
   const guest: GuestData = {
     token: coupleInfo ? coupleInfo.me.token : token,
     nombre: nameFormatted || undefined,
-    alias: existingMember?.aliasBrujo,
+    alias: assignedAlias,
     genero: guestGender,
     equipoId: enrolledTeamId,
     equipoNombre: enrolledTeamName,
@@ -67,7 +78,7 @@ export async function GET(request: Request) {
     whatsappDesbloqueado: !!existingMember,
   };
 
-  const response = {
+  const response: VerifyTokenResponse = {
     valid: true,
     isSealed: !!existingMember,
     guest,
@@ -79,6 +90,7 @@ export async function GET(request: Request) {
         }
       : undefined,
     soulCount: 24 + adminData.totalPlayers,
+    takenNicknames,
   };
 
   return NextResponse.json(response);

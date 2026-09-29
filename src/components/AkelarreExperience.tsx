@@ -37,12 +37,12 @@ export const AkelarreExperience: React.FC<AkelarreExperienceProps> = ({ initialT
           setGuest(data.guest);
           if (data.guest?.nombre) setGuestName(data.guest.nombre);
           if (data.guest?.genero) setGender(data.guest.genero);
+          if (data.guest?.alias) setWitchNickname(data.guest.alias);
           if (data.soulCount) setSoulCount(data.soulCount);
 
           // If already registered, store assigned info so clan is locked
           if (data.isSealed || data.guest?.estado === 'EQUIPO_SELECCIONADO') {
             setIsAlreadyEnrolled(true);
-            if (data.guest?.alias) setWitchNickname(data.guest.alias);
             if (data.guest?.equipoId) setSelectedTeamId(data.guest.equipoId);
             if (data.guest?.equipoNombre) setSelectedTeamName(data.guest.equipoNombre);
           }

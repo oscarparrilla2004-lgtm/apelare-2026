@@ -27,15 +27,21 @@ export interface GuestData {
   fechaApertura?: string | null;
   pactAceptado: boolean;
   whatsappDesbloqueado: boolean;
-  soulCount?: number;
 }
 
 export interface VerifyTokenResponse {
   valid: boolean;
+  isSealed?: boolean;
   guest?: GuestData;
+  spouse?: {
+    name: string;
+    token: string;
+    gender: 'masculino' | 'femenino';
+  };
   whatsappLink?: string;
   soulCount?: number;
   message?: string;
+  takenNicknames?: string[];
 }
 
 export interface TeamMember {
@@ -69,6 +75,7 @@ export interface TeamsOverviewResponse {
   success: boolean;
   totalPlayers: number;
   maxTotalCapacity: number;
+  takenNicknames?: string[];
   spouseExclusionInfo?: {
     spouseName: string;
     spouseTeamId: string;
