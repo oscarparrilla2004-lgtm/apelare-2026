@@ -240,6 +240,8 @@ export class TeamsService {
     const teams = TEAMS_CONFIG.map((def) => {
       const members = data.members[def.id] || [];
       const currentCount = members.length;
+      const maleCount = members.filter((m) => m.genero === 'masculino').length;
+      const femaleCount = members.filter((m) => m.genero === 'femenino').length;
       totalPlayers += currentCount;
       const isExcludedForSpouse = spouseClanId === def.id;
 
@@ -254,6 +256,8 @@ export class TeamsService {
         glowColor: def.glowColor,
         maxMembers: def.maxMembers,
         currentCount,
+        maleCount,
+        femaleCount,
         isFull: currentCount >= def.maxMembers,
         isExcludedForSpouse,
         spouseName: isExcludedForSpouse && spouseName ? spouseName : undefined,

@@ -92,6 +92,8 @@ export interface TeamsOverviewResponse {
     glowColor: string;
     maxMembers: number;
     currentCount: number;
+    maleCount?: number;
+    femaleCount?: number;
     isFull: boolean;
     isExcludedForSpouse?: boolean;
     spouseName?: string;

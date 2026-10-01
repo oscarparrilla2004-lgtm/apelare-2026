@@ -88,7 +88,7 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
     return () => clearInterval(interval);
   }, [fetchTeams]);
 
-  // 🔮 Asignación aleatoria obligatoria por el Oráculo del Caldero (excluyendo clanes llenos y el de la pareja)
+  // 🔮 Asignación armónica y equilibrada por el Oráculo del Caldero (Paridad de Género y Distribución Homogénea)
   const handleConsultOracle = () => {
     if (isSpinning || isSuccess || isLoading) return;
 
@@ -103,11 +103,39 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
     setIsSpinning(true);
     setErrorMsg(null);
 
-    const chosenIndex = Math.floor(Math.random() * availableTeams.length);
-    const chosen = availableTeams[chosenIndex];
+    // Algoritmo de ponderación inteligente para igualar el tamaño de los clanes y equilibrar hombres y mujeres (50/50)
+    const maxCount = Math.max(...availableTeams.map((t) => t.currentCount));
+
+    const weightedTeams = availableTeams.map((t) => {
+      const sizeGap = maxCount - t.currentCount; // Favorece clanes con menos miembros totales
+      const sameGenderCount = gender === 'femenino' ? (t.femaleCount || 0) : (t.maleCount || 0);
+      const genderDeficit = Math.max(0, 5 - sameGenderCount); // Favorece clanes que necesitan este género
+
+      let weight = Math.pow(2.5, sizeGap) * (1 + genderDeficit * 2.5);
+      // Si el clan ya tiene 5 o más personas de este mismo género, penalizar drásticamente para desviar a otros clanes
+      if (sameGenderCount >= 5) {
+        weight *= 0.05;
+      }
+      return { team: t, weight };
+    });
+
+    const totalWeight = weightedTeams.reduce((sum, item) => sum + item.weight, 0);
+    let randomVal = Math.random() * totalWeight;
+    let chosen = weightedTeams[0].team;
+
+    for (const item of weightedTeams) {
+      if (randomVal < item.weight) {
+        chosen = item.team;
+        break;
+      }
+      randomVal -= item.weight;
+    }
+
+    const chosenIndex = availableTeams.findIndex((t) => t.id === chosen.id);
+    const validChosenIndex = chosenIndex >= 0 ? chosenIndex : 0;
 
     let currentStep = 0;
-    const totalSteps = 24 + chosenIndex;
+    const totalSteps = 24 + validChosenIndex;
     let delay = 45; // Starts fast (tic-tic-tic-tic)
 
     const spinStep = () => {
