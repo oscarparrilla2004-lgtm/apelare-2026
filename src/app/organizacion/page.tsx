@@ -143,7 +143,7 @@ export default function OrganizacionPage() {
 
     let text = `🔥 *AKELARRE DE BRUJAS 2026 — LISTA OFICIAL DE CLANES* 🔥\n`;
     text += `📅 30 Octubre — 1 Noviembre\n`;
-    text += `👥 Total Inscritos: ${data.totalPlayers} / ${data.maxTotalCapacity} (21 Parejas)\n\n`;
+    text += `👥 Total Inscritos: ${data.totalPlayers} / ${data.maxTotalCapacity} (${COUPLES_CONFIG.length} Parejas)\n\n`;
     text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
     data.teams.forEach((team) => {
@@ -251,7 +251,7 @@ export default function OrganizacionPage() {
 
   const handleCopyAllWhatsappMessages = () => {
     const flatGuests = getAllGuestsFlat();
-    let text = `🔥 *INVITACIONES INDIVIDUALES PARA EL AKELARRE 2026 (42 INVITADOS)* 🔥\n\n`;
+    let text = `🔥 *INVITACIONES INDIVIDUALES PARA EL AKELARRE 2026 (${flatGuests.length} INVITADOS)* 🔥\n\n`;
 
     flatGuests.forEach((item, idx) => {
       const url = `${baseUrl}/llave/${item.token}`;
@@ -260,7 +260,7 @@ export default function OrganizacionPage() {
 
     navigator.clipboard.writeText(text);
     setCopiedAllLinks(true);
-    showToast('¡Los 42 enlaces copiados al portapapeles!');
+    showToast(`¡Los ${flatGuests.length} enlaces copiados al portapapeles!`);
     setTimeout(() => setCopiedAllLinks(false), 3000);
   };
 
@@ -362,7 +362,7 @@ export default function OrganizacionPage() {
               ORGANIZACIÓN DEL AKELARRE
             </h1>
             <p className="text-xs md:text-sm font-sans text-rose-200/70 italic">
-              Control en tiempo real de los 4 Clanes (10 plazas c/u), 21 Parejas (42 Invitados) y Exportador Excel.
+              Control en tiempo real de los 4 Clanes (10 plazas c/u), {COUPLES_CONFIG.length} Parejas ({getAllGuestsFlat().length} Invitados) y Exportador Excel.
             </p>
           </div>
 
@@ -435,7 +435,7 @@ export default function OrganizacionPage() {
             }`}
           >
             <HeartHandshake className="w-4 h-4" />
-            <span>21 PAREJAS Y ANTI-COLISIÓN</span>
+            <span>{COUPLES_CONFIG.length} PAREJAS Y ANTI-COLISIÓN</span>
           </button>
 
           <button
@@ -447,7 +447,7 @@ export default function OrganizacionPage() {
             }`}
           >
             <LinkIcon className="w-4 h-4" />
-            <span>ENLACES INVITADOS (42)</span>
+            <span>ENLACES INVITADOS ({getAllGuestsFlat().length})</span>
           </button>
         </div>
 
@@ -610,7 +610,7 @@ export default function OrganizacionPage() {
             <div className="p-5 rounded-2xl bg-black/60 border border-gold/30 backdrop-blur-md space-y-2">
               <h3 className="text-lg font-gothic text-gold uppercase font-bold flex items-center gap-2">
                 <HeartHandshake className="w-5 h-5 text-gold" />
-                <span>SEGUIMIENTO DE LAS 21 PAREJAS (ANTI-COLISIÓN ACTIVO)</span>
+                <span>SEGUIMIENTO DE LAS {COUPLES_CONFIG.length} PAREJAS (ANTI-COLISIÓN ACTIVO)</span>
               </h3>
               <p className="text-xs font-sans text-rose-200/80 italic">
                 El sistema garantiza que ningún miembro de una pareja coincida en el mismo clan. Cuando uno elige, el clan queda bloqueado para el otro.
@@ -686,7 +686,7 @@ export default function OrganizacionPage() {
           </div>
         )}
 
-        {/* TAB 3: ENLACES PARA INVITADOS (42) */}
+        {/* TAB 3: ENLACES PARA INVITADOS */}
         {activeTab === 'enlaces' && (
           <div className="space-y-6 animate-fade-in">
             {/* Header & Quick copy all */}
@@ -695,7 +695,7 @@ export default function OrganizacionPage() {
                 <div>
                   <h3 className="text-lg font-gothic text-gold uppercase font-bold flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-gold" />
-                    <span>ENLACES DIRECTOS PERSONALIZADOS (42 INVITADOS)</span>
+                    <span>ENLACES DIRECTOS PERSONALIZADOS ({getAllGuestsFlat().length} INVITADOS)</span>
                   </h3>
                   <p className="text-xs font-sans text-rose-200/70 italic mt-0.5">
                     Cada enlace abre la experiencia personalizada con el nombre del invitado y su pareja precargada.
@@ -707,12 +707,12 @@ export default function OrganizacionPage() {
                   className="py-2.5 px-5 rounded-full bg-gradient-to-r from-emerald-950 to-teal-950 border border-emerald-400 text-emerald-200 font-gothic text-xs tracking-wider uppercase hover:scale-105 transition-all cursor-pointer flex items-center gap-2 self-start"
                 >
                   {copiedAllLinks ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4 text-emerald-400" />}
-                  <span>{copiedAllLinks ? '¡TODOS COPIADOS!' : 'COPIAR TODOS LOS 42 MENSAJES'}</span>
+                  <span>{copiedAllLinks ? '¡TODOS COPIADOS!' : `COPIAR TODOS LOS ${getAllGuestsFlat().length} MENSAJES`}</span>
                 </button>
               </div>
             </div>
 
-            {/* List of 42 Guests */}
+            {/* List of Guests */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {getAllGuestsFlat().map((item, idx) => {
                 const isItemCopied = copiedLinkIndex === item.token;

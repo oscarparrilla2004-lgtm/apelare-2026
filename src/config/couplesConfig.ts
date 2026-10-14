@@ -118,9 +118,14 @@ export const COUPLES_CONFIG: CoupleDefinition[] = [
     partner1: { name: 'Bea', token: 'bea-javi', gender: 'femenino' },
     partner2: { name: 'Javi', token: 'javi', gender: 'masculino' },
   },
+  {
+    id: 'pareja_22',
+    partner1: { name: 'Carolina', token: 'carolina', gender: 'femenino' },
+    partner2: { name: 'Carlos', token: 'carlos', gender: 'masculino' },
+  },
 ];
 
-export const TOTAL_GUESTS_COUNT = COUPLES_CONFIG.length * 2; // 42 guests
+export const TOTAL_GUESTS_COUNT = COUPLES_CONFIG.length * 2; // 44 guests
 
 /**
  * Busca a la pareja de un invitado dado su token
