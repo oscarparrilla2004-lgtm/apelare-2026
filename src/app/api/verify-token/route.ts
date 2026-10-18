@@ -33,9 +33,7 @@ export async function GET(request: Request) {
     const member = team.members.find(
       (m) =>
         m.token.toUpperCase() === token ||
-        (coupleInfo && m.token.toUpperCase() === coupleInfo.me.token.toUpperCase()) ||
-        (coupleInfo && m.nombreMortal.toLowerCase().trim() === coupleInfo.me.name.toLowerCase().trim()) ||
-        m.nombreMortal.toLowerCase().trim() === rawToken.toLowerCase().trim()
+        (coupleInfo && m.token.toUpperCase() === coupleInfo.me.token.toUpperCase())
     );
     if (member) {
       existingMember = member;

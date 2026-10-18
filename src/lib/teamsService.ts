@@ -219,13 +219,10 @@ export class TeamsService {
       if (spouseInfo) {
         spouseName = spouseInfo.spouse.name;
         const spouseToken = spouseInfo.spouse.token.toUpperCase();
-        const spouseNormalizedName = spouseInfo.spouse.name.toLowerCase().trim();
 
         for (const [tid, members] of Object.entries(data.members)) {
           const hasSpouse = members.some(
-            (m) =>
-              m.token.toUpperCase() === spouseToken ||
-              m.nombreMortal.toLowerCase().trim() === spouseNormalizedName
+            (m) => m.token.toUpperCase() === spouseToken
           );
           if (hasSpouse) {
             spouseClanId = tid;
@@ -363,13 +360,10 @@ export class TeamsService {
     const spouseInfo = getSpouseInfoByToken(token);
     if (spouseInfo) {
       const spouseToken = spouseInfo.spouse.token.toUpperCase();
-      const spouseNormalizedName = spouseInfo.spouse.name.toLowerCase().trim();
       const targetTeamMembers = data.members[teamId] || [];
 
       const spouseInTargetTeam = targetTeamMembers.some(
-        (m) =>
-          m.token.toUpperCase() === spouseToken ||
-          m.nombreMortal.toLowerCase().trim() === spouseNormalizedName
+        (m) => m.token.toUpperCase() === spouseToken
       );
 
       if (spouseInTargetTeam) {

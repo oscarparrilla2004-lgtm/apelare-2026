@@ -122,11 +122,10 @@ export default function OrganizacionPage() {
   const findMemberInfo = (token: string, name: string) => {
     if (!data) return null;
     const normToken = token.toUpperCase();
-    const normName = name.toLowerCase().trim();
 
     for (const team of data.teams) {
       const found = team.members.find(
-        (m) => m.token.toUpperCase() === normToken || m.nombreMortal.toLowerCase().trim() === normName
+        (m) => m.token.toUpperCase() === normToken
       );
       if (found) {
         return {
