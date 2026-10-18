@@ -362,7 +362,7 @@ export default function OrganizacionPage() {
               ORGANIZACIÓN DEL AKELARRE
             </h1>
             <p className="text-xs md:text-sm font-sans text-rose-200/70 italic">
-              Control en tiempo real de los 4 Clanes (10 plazas c/u), {COUPLES_CONFIG.length} Parejas ({getAllGuestsFlat().length} Invitados) y Exportador Excel.
+              Control en tiempo real de los 4 Clanes (11 plazas c/u), {COUPLES_CONFIG.length} Parejas ({getAllGuestsFlat().length} Invitados) y Exportador Excel.
             </p>
           </div>
 
@@ -530,7 +530,7 @@ export default function OrganizacionPage() {
                               : 'bg-black/50 border-gold/30 text-amber-200'
                           }`}
                         >
-                          {team.isFull ? 'COMPLETO (7/7)' : `${team.members.length} / ${team.maxMembers} MIEMBROS`}
+                          {team.isFull ? `COMPLETO (${team.maxMembers}/${team.maxMembers})` : `${team.members.length} / ${team.maxMembers} MIEMBROS`}
                         </span>
                         <span className="text-[10px] font-sans text-white/40">
                           {Math.max(0, team.maxMembers - team.members.length)} plazas libres
@@ -821,7 +821,7 @@ export default function OrganizacionPage() {
 
             <h3 className="text-lg font-gothic text-red-400 uppercase font-bold">¿REINICIAR TODOS LOS CLANES A CERO?</h3>
             <p className="text-xs font-sans text-amber-100/90 leading-relaxed">
-              Esta acción vaciará todas las plazas registradas de los 4 clanes (0/40). Úsalo para dejar la aplicación completamente limpia antes de enviar los enlaces a tus invitados.
+              Esta acción vaciará todas las plazas registradas de los 4 clanes (0/{data?.maxTotalCapacity || 44}). Úsalo para dejar la aplicación completamente limpia antes de enviar los enlaces a tus invitados.
             </p>
 
             <div className="flex items-center gap-3 pt-2">

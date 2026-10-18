@@ -10,7 +10,7 @@ export const TEAMS_CONFIG: TeamDefinition[] = [
     borderColor: 'border-amber-500/60',
     bgGradient: 'from-amber-950/80 via-[#1c120c] to-black/90',
     glowColor: 'rgba(245, 158, 11, 0.4)',
-    maxMembers: 10,
+    maxMembers: 11,
   },
   {
     id: 'akelarre_extasis',
@@ -21,7 +21,7 @@ export const TEAMS_CONFIG: TeamDefinition[] = [
     borderColor: 'border-rose-500/60',
     bgGradient: 'from-rose-950/80 via-[#1f0b14] to-black/90',
     glowColor: 'rgba(225, 29, 72, 0.4)',
-    maxMembers: 10,
+    maxMembers: 11,
   },
   {
     id: 'placer_oscuro',
@@ -32,7 +32,7 @@ export const TEAMS_CONFIG: TeamDefinition[] = [
     borderColor: 'border-gold/70',
     bgGradient: 'from-amber-950/60 via-[#19140a] to-black/90',
     glowColor: 'rgba(212, 175, 55, 0.4)',
-    maxMembers: 10,
+    maxMembers: 11,
   },
   {
     id: 'vela_negra',
@@ -43,10 +43,10 @@ export const TEAMS_CONFIG: TeamDefinition[] = [
     borderColor: 'border-purple-500/60',
     bgGradient: 'from-purple-950/80 via-[#170921] to-black/90',
     glowColor: 'rgba(168, 85, 247, 0.4)',
-    maxMembers: 10,
+    maxMembers: 11,
   },
 ];
 
-export const TOTAL_MAX_PLAYERS = 40;
-export const MAX_PLAYERS_PER_TEAM = 10;
+export const TOTAL_MAX_PLAYERS = 44;
+export const MAX_PLAYERS_PER_TEAM = 11;
 

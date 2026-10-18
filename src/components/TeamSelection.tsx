@@ -109,11 +109,11 @@ export const TeamSelection: React.FC<TeamSelectionProps> = ({
     const weightedTeams = availableTeams.map((t) => {
       const sizeGap = maxCount - t.currentCount; // Favorece clanes con menos miembros totales
       const sameGenderCount = gender === 'femenino' ? (t.femaleCount || 0) : (t.maleCount || 0);
-      const genderDeficit = Math.max(0, 5 - sameGenderCount); // Favorece clanes que necesitan este género
+      const genderDeficit = Math.max(0, 6 - sameGenderCount); // Favorece clanes que necesitan este género
 
       let weight = Math.pow(2.5, sizeGap) * (1 + genderDeficit * 2.5);
-      // Si el clan ya tiene 5 o más personas de este mismo género, penalizar drásticamente para desviar a otros clanes
-      if (sameGenderCount >= 5) {
+      // Si el clan ya tiene 6 o más personas de este mismo género, penalizar drásticamente para desviar a otros clanes
+      if (sameGenderCount >= 6) {
         weight *= 0.05;
       }
       return { team: t, weight };
