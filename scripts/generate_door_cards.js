@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const QRCode = require('qrcode');
 
 async function main() {
   const couplesDataPath = path.join(__dirname, '..', 'couples_data.json');
@@ -11,6 +10,9 @@ async function main() {
 
   const couples = JSON.parse(fs.readFileSync(couplesDataPath, 'utf8'));
 
+  const posterPath = path.join(__dirname, '..', 'public', 'images', 'akelarre_poster.jpg');
+  const posterB64 = 'data:image/jpeg;base64,' + fs.readFileSync(posterPath).toString('base64');
+
   const optionsHtml = couples.map(c => 
     `<option value="pareja_${c.coupleIndex}">Pareja #${c.coupleIndex}: ${c.chica.name} & ${c.chico.name}</option>`
   ).join('\n        ');
@@ -18,165 +20,121 @@ async function main() {
   const sheetsHtml = couples.map(c => `
     <!-- HOJA A4 HORIZONTAL PAREJA #${c.coupleIndex} -->
     <section class="door-sheet" id="pareja_${c.coupleIndex}">
-      <!-- Sheet Top Bar -->
-      <div class="sheet-header">
-        <div class="sheet-header-left">
-          <span>🕯️</span>
-          <span>AKELARRE DE BRUJAS 2026</span>
-        </div>
-        <div class="sheet-header-center">
-          HABITACIÓN · PAREJA #${c.coupleIndex}: <span>${c.chica.name}</span> & <span>${c.chico.name}</span>
-        </div>
-        <div class="sheet-header-right">
-          <span>ACCESO PRIVADO</span>
-          <span>🗝️</span>
-        </div>
+      <!-- Sheet Minimal Door Header -->
+      <div class="sheet-room-tag">
+        <span class="room-title">PUERTA DE HABITACIÓN · PAREJA #${c.coupleIndex}</span>
+        <span class="room-names">${c.chica.name.toUpperCase()} &amp; ${c.chico.name.toUpperCase()}</span>
+        <span class="room-sub">AKELARRE 2026</span>
       </div>
 
-      <!-- Cards Row -->
-      <div class="cards-row">
-        <!-- Cut divider line -->
-        <div class="cut-divider">
-          <span class="cut-icon">✂</span>
-          <span class="cut-icon">✦</span>
-          <span class="cut-icon">✂</span>
+      <!-- Two Identical Cards Side-by-Side (Chica Left, Chico Right) -->
+      <div class="cards-pair-container">
+        
+        <!-- TARJETA IZQUIERDA: CHICA (INVITACIÓN VIP IDÉNTICA) -->
+        <article class="pass-card">
+          <!-- Background Poster Art -->
+          <div class="pass-poster-bg" style="background-image: url('${posterB64}');"></div>
+
+          <!-- Smooth Dark Gradient Transition to Bottom -->
+          <div class="pass-gradient-overlay"></div>
+
+          <!-- Dark Solid Bottom Base -->
+          <div class="pass-bottom-backdrop"></div>
+
+          <!-- Outer Gold Ornate Border -->
+          <div class="pass-outer-border"></div>
+          <div class="pass-inner-dashed"></div>
+
+          <!-- Corner Gothic Runes -->
+          <span class="corner-rune cr-tl">𝕬</span>
+          <span class="corner-rune cr-tr">𝕬</span>
+          <span class="corner-rune cr-bl">𝕬</span>
+          <span class="corner-rune cr-br">𝕬</span>
+
+          <!-- Lower Gothic Frame with Inner Accents -->
+          <div class="pass-lower-frame">
+            <span class="frame-star fs-tl">✦</span>
+            <span class="frame-star fs-tr">✦</span>
+            <span class="frame-star fs-bl">✦</span>
+            <span class="frame-star fs-br">✦</span>
+
+            <!-- Header: PASE SAGRADO DEL AKELARRE -->
+            <div class="pass-header-text">✦ PASE SAGRADO DEL AKELARRE ✦</div>
+
+            <!-- Mortal Name -->
+            <h1 class="pass-mortal-name">${c.chica.name}</h1>
+
+            <!-- Witch Nickname -->
+            <div class="pass-witch-alias">«${c.chica.alias}»</div>
+
+            <!-- Clan Badge -->
+            <div class="pass-clan-badge">
+              ✦ CLAN: ${c.chica.teamName.toUpperCase()} ✦
+            </div>
+
+            <!-- Stamped Red Wax Seal -->
+            <div class="pass-wax-seal">
+              <span class="seal-rune">𝕬</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Vertical Cut Guide Divider -->
+        <div class="pair-divider">
+          <span>✂</span>
+          <span>✦</span>
+          <span>✂</span>
         </div>
 
-        <!-- TARJETA IZQUIERDA: CHICA (BRUJA) -->
-        <article class="invitation-card">
-          <div class="card-inner-frame"></div>
-          <span class="corner-rune corner-tl">𝕬</span>
-          <span class="corner-rune corner-tr">𝕬</span>
-          <span class="corner-rune corner-bl">✦</span>
-          <span class="corner-rune corner-br">✦</span>
+        <!-- TARJETA DERECHA: CHICO (INVITACIÓN VIP IDÉNTICA) -->
+        <article class="pass-card">
+          <!-- Background Poster Art -->
+          <div class="pass-poster-bg" style="background-image: url('${posterB64}');"></div>
 
-          <!-- Role Pill -->
-          <div class="card-role-badge">
-            <span>🌙</span>
-            <span>INVITACIÓN SAGRADA · BRUJA</span>
-          </div>
+          <!-- Smooth Dark Gradient Transition to Bottom -->
+          <div class="pass-gradient-overlay"></div>
 
-          <!-- Mortal Name & Alias -->
-          <div class="card-identity">
-            <h1 class="guest-mortal-name">${c.chica.name}</h1>
-            <span class="guest-witch-alias">«${c.chica.alias}»</span>
-          </div>
+          <!-- Dark Solid Bottom Base -->
+          <div class="pass-bottom-backdrop"></div>
 
-          <!-- Clan Shield Box -->
-          <div class="card-clan-box">
-            <div class="clan-title">
-              <span>${c.chica.teamIcon}</span>
-              <span>CLAN: ${c.chica.teamName}</span>
-            </div>
-            <div class="clan-tagline">&ldquo;${c.chica.teamTagline}&rdquo;</div>
-          </div>
+          <!-- Outer Gold Ornate Border -->
+          <div class="pass-outer-border"></div>
+          <div class="pass-inner-dashed"></div>
 
-          <!-- Conclave Details Box -->
-          <div class="card-event-box">
-            <div class="event-item">
-              <span>🏰</span>
-              <span><strong>Mansión del Akelarre</strong> · Habitación Privada</span>
-            </div>
-            <div class="event-item">
-              <span>📅</span>
-              <span><strong>30 Octubre – 1 Noviembre 2026</strong></span>
-            </div>
-            <div class="event-item">
-              <span>🌙</span>
-              <span><strong>Viernes Noche:</strong> Fiesta Dress Code Sexy</span>
-            </div>
-            <div class="event-item">
-              <span>🎭</span>
-              <span><strong>Sábado Noche:</strong> Gran Akelarre Brujas & Brujos</span>
-            </div>
-          </div>
+          <!-- Corner Gothic Runes -->
+          <span class="corner-rune cr-tl">𝕬</span>
+          <span class="corner-rune cr-tr">𝕬</span>
+          <span class="corner-rune cr-bl">𝕬</span>
+          <span class="corner-rune cr-br">𝕬</span>
 
-          <!-- Footer with Wax Seal & QR Code -->
-          <div class="card-footer">
-            <div class="wax-seal-wrapper">
-              <div class="wax-seal">𝕬</div>
-              <div class="wax-seal-text">
-                SELLO OFICIAL<br />AKELARRE 2026<br />PACTO SELLADO
-              </div>
+          <!-- Lower Gothic Frame with Inner Accents -->
+          <div class="pass-lower-frame">
+            <span class="frame-star fs-tl">✦</span>
+            <span class="frame-star fs-tr">✦</span>
+            <span class="frame-star fs-bl">✦</span>
+            <span class="frame-star fs-br">✦</span>
+
+            <!-- Header: PASE SAGRADO DEL AKELARRE -->
+            <div class="pass-header-text">✦ PASE SAGRADO DEL AKELARRE ✦</div>
+
+            <!-- Mortal Name -->
+            <h1 class="pass-mortal-name">${c.chico.name}</h1>
+
+            <!-- Warlock Nickname -->
+            <div class="pass-witch-alias">«${c.chico.alias}»</div>
+
+            <!-- Clan Badge -->
+            <div class="pass-clan-badge">
+              ✦ CLAN: ${c.chico.teamName.toUpperCase()} ✦
             </div>
 
-            <div class="qr-container">
-              <img src="${c.chica.qr}" alt="QR ${c.chica.name}" class="qr-img" />
-              <div class="qr-info">
-                <span class="qr-scan-label">ESCANEA TU LLAVE</span>
-                <span class="qr-token-code">${c.chica.token.toUpperCase()}</span>
-              </div>
+            <!-- Stamped Red Wax Seal -->
+            <div class="pass-wax-seal">
+              <span class="seal-rune">𝕬</span>
             </div>
           </div>
         </article>
 
-        <!-- TARJETA DERECHA: CHICO (BRUJO) -->
-        <article class="invitation-card">
-          <div class="card-inner-frame"></div>
-          <span class="corner-rune corner-tl">𝕬</span>
-          <span class="corner-rune corner-tr">𝕬</span>
-          <span class="corner-rune corner-bl">✦</span>
-          <span class="corner-rune corner-br">✦</span>
-
-          <!-- Role Pill -->
-          <div class="card-role-badge">
-            <span>⚡</span>
-            <span>INVITACIÓN SAGRADA · BRUJO</span>
-          </div>
-
-          <!-- Mortal Name & Alias -->
-          <div class="card-identity">
-            <h1 class="guest-mortal-name">${c.chico.name}</h1>
-            <span class="guest-witch-alias">«${c.chico.alias}»</span>
-          </div>
-
-          <!-- Clan Shield Box -->
-          <div class="card-clan-box">
-            <div class="clan-title">
-              <span>${c.chico.teamIcon}</span>
-              <span>CLAN: ${c.chico.teamName}</span>
-            </div>
-            <div class="clan-tagline">&ldquo;${c.chico.teamTagline}&rdquo;</div>
-          </div>
-
-          <!-- Conclave Details Box -->
-          <div class="card-event-box">
-            <div class="event-item">
-              <span>🏰</span>
-              <span><strong>Mansión del Akelarre</strong> · Habitación Privada</span>
-            </div>
-            <div class="event-item">
-              <span>📅</span>
-              <span><strong>30 Octubre – 1 Noviembre 2026</strong></span>
-            </div>
-            <div class="event-item">
-              <span>🌙</span>
-              <span><strong>Viernes Noche:</strong> Fiesta Dress Code Sexy</span>
-            </div>
-            <div class="event-item">
-              <span>🎭</span>
-              <span><strong>Sábado Noche:</strong> Gran Akelarre Brujas & Brujos</span>
-            </div>
-          </div>
-
-          <!-- Footer with Wax Seal & QR Code -->
-          <div class="card-footer">
-            <div class="wax-seal-wrapper">
-              <div class="wax-seal">𝕬</div>
-              <div class="wax-seal-text">
-                SELLO OFICIAL<br />AKELARRE 2026<br />PACTO SELLADO
-              </div>
-            </div>
-
-            <div class="qr-container">
-              <img src="${c.chico.qr}" alt="QR ${c.chico.name}" class="qr-img" />
-              <div class="qr-info">
-                <span class="qr-scan-label">ESCANEA TU LLAVE</span>
-                <span class="qr-token-code">${c.chico.token.toUpperCase()}</span>
-              </div>
-            </div>
-          </div>
-        </article>
       </div>
     </section>
   `).join('\n');
@@ -186,49 +144,11 @@ async function main() {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tarjetas de Invitación por Parejas — Akelarre 2026</title>
+  <title>Tarjetas de Invitación VIP para Puertas (A4 Horizontal) — Akelarre 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=MedievalSharp&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg-page: #070509;
-      --bg-card: #0f0a15;
-      --bg-card-gradient: radial-gradient(circle at 50% 20%, #200f24 0%, #0d0714 70%, #050208 100%);
-      --text-main: #ffffff;
-      --text-muted: #e2d9cc;
-      --gold-primary: #d4af37;
-      --gold-light: #fef08a;
-      --gold-dark: #8c6d1f;
-      --gold-glow: rgba(212, 175, 55, 0.45);
-      --border-gold: #d4af37;
-      --border-inner: rgba(212, 175, 55, 0.4);
-      --box-clan-bg: rgba(0, 0, 0, 0.6);
-      --box-details-bg: rgba(0, 0, 0, 0.4);
-      --wax-red: #8b0000;
-      --sheet-header-bg: rgba(0, 0, 0, 0.7);
-      --divider-color: rgba(212, 175, 55, 0.35);
-    }
-
-    body.parchment {
-      --bg-page: #fbf7ee;
-      --bg-card: #f5eedb;
-      --bg-card-gradient: linear-gradient(135deg, #fffcf5 0%, #f4ebd6 100%);
-      --text-main: #1c140c;
-      --text-muted: #4a3828;
-      --gold-primary: #8a6a1b;
-      --gold-light: #684f11;
-      --gold-dark: #473507;
-      --gold-glow: rgba(138, 106, 27, 0.2);
-      --border-gold: #8a6a1b;
-      --border-inner: rgba(138, 106, 27, 0.4);
-      --box-clan-bg: rgba(255, 255, 255, 0.7);
-      --box-details-bg: rgba(255, 255, 255, 0.6);
-      --wax-red: #851313;
-      --sheet-header-bg: #ece2c8;
-      --divider-color: rgba(138, 106, 27, 0.4);
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -236,26 +156,26 @@ async function main() {
     }
 
     body {
-      background-color: #1a1622;
+      background-color: #120e18;
       font-family: 'Inter', sans-serif;
-      color: var(--text-main);
+      color: #ffffff;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Print Controls Bar */
+    /* Print Controls Bar (No Print) */
     .controls-bar {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: #11091a;
-      border-bottom: 2px solid var(--gold-primary);
+      background: #0a060f;
+      border-bottom: 2px solid #d4af37;
       padding: 12px 24px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.85);
     }
 
     .controls-left {
@@ -268,9 +188,14 @@ async function main() {
       font-family: 'Cinzel', serif;
       font-size: 16px;
       font-weight: 800;
-      color: var(--gold-light);
+      color: #fef08a;
       letter-spacing: 1px;
       text-transform: uppercase;
+    }
+
+    .controls-desc {
+      font-size: 11px;
+      color: #a1a1aa;
     }
 
     .controls-actions {
@@ -307,16 +232,6 @@ async function main() {
       transform: scale(1.03);
     }
 
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      border: 1px solid rgba(212, 175, 55, 0.5);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(212, 175, 55, 0.2);
-    }
-
     .select-dropdown {
       background: #08030d;
       color: #fde68a;
@@ -338,350 +253,270 @@ async function main() {
       gap: 32px;
     }
 
-    /* A4 Landscape Sheet */
+    /* A4 Landscape Sheet (297mm x 210mm) */
     .door-sheet {
       width: 297mm;
       height: 210mm;
       max-width: 297mm;
       max-height: 210mm;
-      background: var(--bg-page);
-      padding: 7mm 9mm;
+      background: #07040a;
+      padding: 5mm 10mm;
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
       page-break-after: always;
       break-after: page;
     }
 
-    /* Sheet Header */
-    .sheet-header {
-      height: 11mm;
-      width: 100%;
+    /* Minimal Room Tag Header */
+    .sheet-room-tag {
+      height: 6mm;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1.5px solid var(--border-gold);
-      background: var(--sheet-header-bg);
-      border-radius: 6px;
-      padding: 0 14px;
-    }
-
-    .sheet-header-left {
+      padding: 0 8px;
+      color: #d4af37;
       font-family: 'Cinzel', serif;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--gold-primary);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .sheet-header-center {
-      font-family: 'Cinzel', serif;
-      font-size: 14px;
-      font-weight: 900;
-      color: var(--text-main);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .sheet-header-center span {
-      color: var(--gold-primary);
-    }
-
-    .sheet-header-right {
-      font-family: 'Inter', sans-serif;
       font-size: 10px;
-      font-weight: 700;
-      color: var(--gold-primary);
       letter-spacing: 1.5px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
     }
 
-    /* Cards Row */
-    .cards-row {
+    .room-title {
+      font-weight: 700;
+      color: #a1a1aa;
+    }
+
+    .room-names {
+      font-weight: 900;
+      color: #fef08a;
+      letter-spacing: 2px;
+    }
+
+    .room-sub {
+      font-weight: 600;
+      color: rgba(212, 175, 55, 0.6);
+    }
+
+    /* Cards Pair Row */
+    .cards-pair-container {
+      height: 191mm;
       display: flex;
-      align-items: stretch;
-      justify-content: space-between;
-      gap: 6mm;
-      height: 182mm;
-      width: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: 16mm;
       position: relative;
     }
 
-    /* Center Cut Divider */
-    .cut-divider {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 0;
-      border-left: 1.5px dashed var(--divider-color);
-      transform: translateX(-50%);
-      z-index: 10;
+    /* Center Divider */
+    .pair-divider {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
-      pointer-events: none;
+      height: 185mm;
+      color: rgba(212, 175, 55, 0.35);
+      font-size: 12px;
+      border-left: 1px dashed rgba(212, 175, 55, 0.3);
+      padding: 6px 0;
     }
 
-    .cut-icon {
-      font-size: 11px;
-      background: var(--bg-page);
-      color: var(--gold-primary);
-      padding: 2px 4px;
-      border-radius: 4px;
-      border: 1px solid var(--border-gold);
-    }
-
-    /* Individual Card */
-    .invitation-card {
-      width: 136mm;
-      height: 182mm;
-      background: var(--bg-card);
-      background-image: var(--bg-card-gradient);
-      border: 2.5px solid var(--border-gold);
-      border-radius: 10px;
-      padding: 7mm 7mm 5mm 7mm;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    /* IDENTICAL PASS CARD (9:16 Aspect Ratio) */
+    .pass-card {
+      width: 107.5mm;
+      height: 191mm;
       position: relative;
+      border-radius: 2px;
       overflow: hidden;
-      box-shadow: inset 0 0 25px rgba(0,0,0,0.5);
+      background: #07040a;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      flex-shrink: 0;
     }
 
-    /* Inner Inset Dashed Border */
-    .card-inner-frame {
+    /* Poster Artwork Background */
+    .pass-poster-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 118mm;
+      background-size: cover;
+      background-position: top center;
+      background-repeat: no-repeat;
+    }
+
+    /* Smooth Gradient Transition */
+    .pass-gradient-overlay {
+      position: absolute;
+      top: 102mm;
+      left: 0;
+      width: 100%;
+      height: 18mm;
+      background: linear-gradient(to bottom, rgba(7, 4, 10, 0) 0%, rgba(7, 4, 10, 0.85) 50%, rgba(7, 4, 10, 1) 100%);
+      z-index: 2;
+    }
+
+    /* Solid Dark Bottom Backdrop */
+    .pass-bottom-backdrop {
+      position: absolute;
+      top: 118mm;
+      left: 0;
+      width: 100%;
+      height: 73mm;
+      background: #07040a;
+      z-index: 2;
+    }
+
+    /* Outer Ornate Gold Border */
+    .pass-outer-border {
       position: absolute;
       top: 3mm;
       left: 3mm;
       right: 3mm;
       bottom: 3mm;
-      border: 1px dashed var(--border-inner);
-      border-radius: 7px;
+      border: 2px solid #d4af37;
       pointer-events: none;
+      z-index: 10;
     }
 
-    /* Corner Gothic Runes */
+    /* Inner Dashed Decorative Border */
+    .pass-inner-dashed {
+      position: absolute;
+      top: 4.8mm;
+      left: 4.8mm;
+      right: 4.8mm;
+      bottom: 4.8mm;
+      border: 1px dashed rgba(212, 175, 55, 0.4);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Corner Runes 𝕬 */
     .corner-rune {
       position: absolute;
       font-family: 'Cinzel', serif;
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--gold-primary);
+      font-size: 14px;
+      font-weight: 900;
+      color: #d4af37;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 11;
+    }
+    .cr-tl { top: 6.5mm; left: 7.5mm; }
+    .cr-tr { top: 6.5mm; right: 7.5mm; }
+    .cr-bl { bottom: 6.5mm; left: 7.5mm; }
+    .cr-br { bottom: 6.5mm; right: 7.5mm; }
+
+    /* Lower Gothic Parchment Frame */
+    .pass-lower-frame {
+      position: absolute;
+      top: 120mm;
+      left: 7mm;
+      right: 7mm;
+      bottom: 7mm;
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      border-radius: 4px;
+      padding: 5mm 4mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      z-index: 5;
+    }
+
+    /* Corner Stars ✦ */
+    .frame-star {
+      position: absolute;
+      font-size: 11px;
+      color: #d4af37;
       line-height: 1;
       pointer-events: none;
     }
-    .corner-tl { top: 4.5mm; left: 4.5mm; }
-    .corner-tr { top: 4.5mm; right: 4.5mm; }
-    .corner-bl { bottom: 4.5mm; left: 4.5mm; }
-    .corner-br { bottom: 4.5mm; right: 4.5mm; }
+    .fs-tl { top: 1.5mm; left: 2mm; }
+    .fs-tr { top: 1.5mm; right: 2mm; }
+    .fs-bl { bottom: 1.5mm; left: 2mm; }
+    .fs-br { bottom: 1.5mm; right: 2mm; }
 
-    /* Card Top Role Badge */
-    .card-role-badge {
-      align-self: center;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 12px;
-      border-radius: 9999px;
-      border: 1px solid var(--border-gold);
-      background: rgba(0, 0, 0, 0.4);
-      font-family: 'Cinzel', serif;
-      font-size: 10.5px;
+    /* Header Text: ✦ PASE SAGRADO DEL AKELARRE ✦ */
+    .pass-header-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 8.5px;
       font-weight: 700;
-      color: var(--gold-light);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      z-index: 2;
-    }
-
-    /* Name & Alias Area */
-    .card-identity {
-      text-align: center;
-      margin-top: 3px;
-      margin-bottom: 3px;
-      z-index: 2;
-    }
-
-    .guest-mortal-name {
-      font-family: 'Cinzel', serif;
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gold-light);
-      line-height: 1.1;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-    }
-
-    .guest-witch-alias {
-      font-family: 'MedievalSharp', cursive;
-      font-size: 17px;
-      color: var(--gold-primary);
-      margin-top: 3px;
-      letter-spacing: 1px;
-      display: block;
-      font-weight: bold;
-    }
-
-    /* Clan Box */
-    .card-clan-box {
-      background: var(--box-clan-bg);
-      border: 1.5px solid var(--border-gold);
-      border-radius: 8px;
-      padding: 6px 10px;
-      text-align: center;
-      margin: 3px 0;
-      z-index: 2;
-    }
-
-    .clan-title {
-      font-family: 'Cinzel', serif;
-      font-size: 13.5px;
-      font-weight: 800;
-      color: var(--gold-light);
+      color: #f3e5ab;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      margin-top: 1mm;
     }
 
-    .clan-tagline {
+    /* Mortal Name */
+    .pass-mortal-name {
+      font-family: 'Cinzel', serif;
+      font-size: 21px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.1;
+      background: linear-gradient(to bottom, #fffbe6 0%, #d4af37 50%, #aa8214 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 1.5mm;
+    }
+
+    /* Witch Nickname */
+    .pass-witch-alias {
       font-family: 'MedievalSharp', cursive;
-      font-size: 11.5px;
-      color: var(--text-muted);
-      margin-top: 2px;
+      font-size: 14.5px;
       font-style: italic;
+      color: #fcd34d;
+      letter-spacing: 1px;
+      margin-top: 1mm;
     }
 
-    /* Event Conclave Details Box */
-    .card-event-box {
-      background: var(--box-details-bg);
-      border: 1px solid var(--border-inner);
-      border-radius: 8px;
-      padding: 6px 10px;
-      margin: 3px 0;
-      font-size: 10px;
-      line-height: 1.45;
-      color: var(--text-muted);
-      z-index: 2;
+    /* Clan Badge */
+    .pass-clan-badge {
+      display: inline-block;
+      background: rgba(139, 0, 0, 0.65);
+      border: 1.5px solid #d4af37;
+      border-radius: 3px;
+      padding: 3px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #fef08a;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 2mm;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
     }
 
-    .event-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 2px;
-    }
-    .event-item:last-child {
-      margin-bottom: 0;
-    }
-    .event-item strong {
-      color: var(--gold-light);
-      font-weight: 700;
-    }
-
-    /* Card Bottom Footer: Wax Seal + QR Code */
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 4px;
-      padding-top: 5px;
-      border-top: 1px solid var(--border-inner);
-      z-index: 2;
-    }
-
-    /* Wax Seal */
-    .wax-seal-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .wax-seal {
-      width: 44px;
-      height: 44px;
+    /* Stamped Red Wax Seal */
+    .pass-wax-seal {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #b91c1c 0%, var(--wax-red) 70%, #450a0a 100%);
-      border: 2px solid var(--border-gold);
-      box-shadow: 0 0 10px rgba(185, 28, 28, 0.6), inset 0 0 6px rgba(0,0,0,0.8);
+      background: radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%);
+      border: 2px solid #d4af37;
+      box-shadow: 0 0 12px rgba(185, 28, 28, 0.7), inset 0 0 6px rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--gold-light);
+      margin-top: 2.5mm;
+      margin-bottom: 1mm;
+    }
+
+    .seal-rune {
+      color: #fef08a;
       font-family: 'Cinzel', serif;
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 900;
-      flex-shrink: 0;
+      line-height: 1;
     }
 
-    .wax-seal-text {
-      font-family: 'Cinzel', serif;
-      font-size: 8.5px;
-      line-height: 1.25;
-      color: var(--gold-primary);
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-    }
-
-    /* QR Code Container */
-    .qr-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #ffffff;
-      padding: 3px 6px;
-      border-radius: 6px;
-      border: 1.5px solid var(--border-gold);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    .qr-img {
-      width: 44px;
-      height: 44px;
-      display: block;
-    }
-
-    .qr-info {
-      text-align: left;
-    }
-
-    .qr-scan-label {
-      font-size: 7.5px;
-      font-weight: 800;
-      color: #713f12;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: block;
-    }
-
-    .qr-token-code {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      font-weight: 900;
-      color: #000000;
-      display: block;
-      letter-spacing: 0.5px;
-    }
-
-    /* PRINT SPECIFIC STYLES */
+    /* PRINT SPECIFIC CSS */
     @page {
       size: A4 landscape;
       margin: 0;
@@ -690,7 +525,6 @@ async function main() {
     @media print {
       body {
         background: transparent !important;
-        color-adjust: exact !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -717,47 +551,38 @@ async function main() {
     }
   </style>
 </head>
-<body id="mainBody">
+<body>
 
-  <!-- Sticky Controls Header (hidden on print) -->
+  <!-- Controls Bar (Hidden during print) -->
   <header class="controls-bar no-print">
     <div class="controls-left">
       <span style="font-size: 24px;">🗝️</span>
       <div>
-        <div class="controls-title">Tarjetas de Invitación para Puertas de Habitación</div>
-        <div style="font-size: 11px; color: #a1a1aa;">2 tarjetas por hoja A4 Horizontal: Chica (Izquierda) & Chico (Derecha)</div>
+        <div class="controls-title">Tarjetas de Invitación VIP para Puertas (A4 Horizontal)</div>
+        <div class="controls-desc">Cartel original oficial + Nombre + Apodo + Clan + Sello de Lacre (Chica a la izquierda, Chico a la derecha)</div>
       </div>
     </div>
 
     <div class="controls-actions">
-      <!-- Filter couple -->
+      <!-- Selector de Pareja -->
       <select id="coupleFilter" class="select-dropdown" onchange="filterCouples()">
         <option value="all">Imprimir Todas las Parejas (23 Hojas A4)</option>
         ${optionsHtml}
       </select>
 
-      <!-- Toggle parchment/dark -->
-      <button class="btn btn-secondary" onclick="toggleTheme()">
-        🌓 Modo Ahorro Tinta / Oscuro
-      </button>
-
-      <!-- Print Button -->
+      <!-- Botón Imprimir -->
       <button class="btn btn-primary" onclick="window.print()">
         🖨️ IMPRIMIR A4 HORIZONTAL
       </button>
     </div>
   </header>
 
-  <!-- Printable Area -->
+  <!-- Printable Container -->
   <main class="print-container">
 ${sheetsHtml}
   </main>
 
   <script>
-    function toggleTheme() {
-      document.body.classList.toggle('parchment');
-    }
-
     function filterCouples() {
       const select = document.getElementById('coupleFilter');
       const val = select.value;
@@ -776,7 +601,7 @@ ${sheetsHtml}
 
   fs.writeFileSync(path.join(__dirname, '..', 'public', 'tarjetas_puertas_A4_horizontal.html'), html);
   fs.writeFileSync(path.join(__dirname, '..', 'tarjetas_puertas_A4_horizontal.html'), html);
-  console.log('Successfully generated public/tarjetas_puertas_A4_horizontal.html and root tarjetas_puertas_A4_horizontal.html!');
+  console.log('Successfully generated public/tarjetas_puertas_A4_horizontal.html and root tarjetas_puertas_A4_horizontal.html with IDENTICAL VIP pass design!');
 }
 
 main();
