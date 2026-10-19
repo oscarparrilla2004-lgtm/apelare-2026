@@ -8,6 +8,11 @@ import {
   Printer,
   ArrowLeft,
   RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FileText,
+  Files,
 } from 'lucide-react';
 
 interface ProcessedMember {
@@ -30,7 +35,8 @@ interface ProcessedCouple {
 export default function ImprimirParejasPage() {
   const [couples, setCouples] = useState<ProcessedCouple[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCoupleId, setSelectedCoupleId] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'single' | 'all'>('single');
+  const [currentIndex, setCurrentIndex] = useState<number>(1);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -103,10 +109,22 @@ export default function ImprimirParejasPage() {
     window.print();
   };
 
+  const prevCouple = () => {
+    if (currentIndex > 1) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const nextCouple = () => {
+    if (currentIndex < couples.length) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
   const filteredCouples =
-    selectedCoupleId === 'all'
+    viewMode === 'all'
       ? couples
-      : couples.filter((c) => c.id === selectedCoupleId || `pareja_${c.coupleIndex}` === selectedCoupleId);
+      : couples.filter((c) => c.coupleIndex === currentIndex);
 
   return (
     <div className="min-h-screen bg-[#0b0710] text-white">
@@ -159,42 +177,89 @@ export default function ImprimirParejasPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-sans transition-all"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Volver a Organización</span>
+              <span>Volver</span>
             </Link>
 
             <div>
               <h1 className="font-gothic font-bold text-amber-200 text-sm md:text-base uppercase tracking-wider flex items-center gap-2">
                 <span>🗝️</span>
-                <span>Invitaciones VIP para Puertas (A4 Horizontal Pegadas Sin Espacios)</span>
+                <span>Invitaciones de Puertas (A4 Horizontal)</span>
               </h1>
               <p className="text-[11px] text-white/60 font-sans hidden sm:block">
-                Cartel completo 100% visible sin cajón + Nombre, Nick de Pareja, Nick del Oráculo, Clan, Fecha y Sello
+                {viewMode === 'single'
+                  ? `Mostrando Hoja #${currentIndex} de ${couples.length} (1 pareja separada por hoja)`
+                  : `Mostrando las ${couples.length} hojas A4 completas`}
               </p>
             </div>
           </div>
 
           <div className="flex items-center flex-wrap gap-2">
-            {/* Filter */}
-            <div className="relative">
-              <select
-                value={selectedCoupleId}
-                onChange={(e) => setSelectedCoupleId(e.target.value)}
-                className="bg-[#08030d] border border-gold/70 text-amber-200 text-xs rounded-lg px-3 py-2 pr-8 font-sans focus:outline-none cursor-pointer"
+            {/* Mode Switcher */}
+            <div className="flex bg-white/10 p-1 rounded-lg border border-gold/40 gap-1 text-xs font-sans">
+              <button
+                onClick={() => setViewMode('single')}
+                className={`px-3 py-1 rounded font-bold transition-all flex items-center gap-1 ${
+                  viewMode === 'single'
+                    ? 'bg-[#d4af37] text-black shadow-[0_0_10px_rgba(212,175,55,0.5)]'
+                    : 'text-zinc-300 hover:text-white'
+                }`}
               >
-                <option value="all">Todas las Parejas ({couples.length} Puertas)</option>
-                {couples.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    Pareja #{c.coupleIndex}: {c.chica.name} & {c.chico.name} ({c.coupleNick})
-                  </option>
-                ))}
-              </select>
+                <FileText className="w-3.5 h-3.5" />
+                <span>Hoja a Hoja</span>
+              </button>
+              <button
+                onClick={() => setViewMode('all')}
+                className={`px-3 py-1 rounded font-bold transition-all flex items-center gap-1 ${
+                  viewMode === 'all'
+                    ? 'bg-[#d4af37] text-black shadow-[0_0_10px_rgba(212,175,55,0.5)]'
+                    : 'text-zinc-300 hover:text-white'
+                }`}
+              >
+                <Files className="w-3.5 h-3.5" />
+                <span>Ver Todas</span>
+              </button>
             </div>
+
+            {/* Pagination for Single Mode */}
+            {viewMode === 'single' && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={prevCouple}
+                  disabled={currentIndex <= 1}
+                  className="p-1.5 rounded-lg border border-gold/50 bg-black/40 text-amber-200 hover:bg-[#d4af37] hover:text-black disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                  title="Pareja Anterior"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <select
+                  value={currentIndex}
+                  onChange={(e) => setCurrentIndex(Number(e.target.value))}
+                  className="bg-[#08030d] border border-gold/70 text-amber-200 text-xs rounded-lg px-2.5 py-1.5 font-sans focus:outline-none cursor-pointer"
+                >
+                  {couples.map((c) => (
+                    <option key={c.id} value={c.coupleIndex}>
+                      #{c.coupleIndex}: {c.chica.name} & {c.chico.name} ({c.coupleNick})
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={nextCouple}
+                  disabled={currentIndex >= couples.length}
+                  className="p-1.5 rounded-lg border border-gold/50 bg-black/40 text-amber-200 hover:bg-[#d4af37] hover:text-black disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                  title="Pareja Siguiente"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
             {/* Refresh */}
             <button
               onClick={loadData}
               title="Recargar datos"
-              className="p-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/15 text-white/80 transition-all cursor-pointer"
+              className="p-1.5 rounded-lg border border-white/20 bg-white/5 hover:bg-white/15 text-white/80 transition-all cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
@@ -203,11 +268,26 @@ export default function ImprimirParejasPage() {
             <button
               onClick={handlePrint}
               style={{ backgroundColor: '#d4af37', color: '#070509' }}
-              className="px-5 py-2 rounded-full border-2 border-white font-sans font-black text-xs md:text-sm tracking-wider uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.7)] flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2 rounded-full border-2 border-white font-sans font-black text-xs tracking-wider uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(212,175,55,0.7)] flex items-center gap-1.5 cursor-pointer"
             >
-              <Printer className="w-4 h-4 stroke-[2.5]" />
-              <span>IMPRIMIR A4 HORIZONTAL</span>
+              <Printer className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>
+                {viewMode === 'single'
+                  ? `IMPRIMIR HOJA #${currentIndex}`
+                  : `IMPRIMIR LAS ${couples.length} HOJAS`}
+              </span>
             </button>
+
+            {/* Download ZIP */}
+            <a
+              href="/PDFs_Copisteria_A4_Horizontal.zip"
+              download
+              className="px-4 py-2 rounded-full border-2 border-emerald-400 bg-emerald-700 hover:bg-emerald-600 font-sans font-bold text-xs tracking-wider uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(16,185,129,0.5)] flex items-center gap-1.5 cursor-pointer text-white no-underline"
+              title="Descargar ZIP con los 23 PDFs individuales para llevar en PenDrive a la copistería"
+            >
+              <Download className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>DESCARGAR 23 PDFs (ZIP)</span>
+            </a>
           </div>
         </div>
       </header>

@@ -8,108 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=MedievalSharp&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
+    
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      background-color: #0b0710;
-      font-family: 'Inter', sans-serif;
-      color: #ffffff;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* Print Controls Bar (No Print) */
-    .controls-bar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: #0a060f;
-      border-bottom: 2px solid #d4af37;
-      padding: 12px 24px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.85);
-    }
-
-    .controls-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .controls-title {
-      font-family: 'Cinzel', serif;
-      font-size: 16px;
-      font-weight: 800;
-      color: #fef08a;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .controls-desc {
-      font-size: 11px;
-      color: #a1a1aa;
-    }
-
-    .controls-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .btn {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 9px 18px;
-      border-radius: 9999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: #d4af37;
-      color: #070509;
-      border: 2px solid #ffffff;
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
-    }
-
-    .btn-primary:hover {
-      background: #fde047;
-      transform: scale(1.03);
-    }
-
-    .select-dropdown {
-      background: #08030d;
-      color: #fde68a;
-      border: 1.5px solid #d4af37;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      cursor: pointer;
-    }
-
-    /* Print Container */
-    .print-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 0;
-      gap: 32px;
     }
 
     /* A4 Landscape Sheet (297mm x 210mm) - EXACTO, OCUPA TODO, SIN ESPACIOS */
@@ -137,7 +40,7 @@
       height: 210mm;
       position: relative;
       overflow: hidden;
-      background: #000000;
+      background-color: #000000;
       flex-shrink: 0;
     }
 
@@ -310,8 +213,187 @@
       line-height: 1;
       text-shadow: 0 0 6px rgba(0,0,0,0.8);
     }
+  
 
-    /* PRINT SPECIFIC CSS - OCUPA EL 100% DEL A4 SIN MÁRGENES */
+    body {
+      background-color: #0b0710;
+      font-family: 'Inter', sans-serif;
+      color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Print Controls Bar (No Print) */
+    .controls-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #0a060f;
+      border-bottom: 2px solid #d4af37;
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.85);
+    }
+
+    .controls-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .controls-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #fef08a;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .controls-desc {
+      font-size: 11px;
+      color: #a1a1aa;
+    }
+
+    .controls-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-toggles {
+      display: flex;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+    }
+
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: #d1d5db;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: #d4af37;
+      color: #0b0710;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+
+    .single-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: rgba(212, 175, 55, 0.2);
+      border: 1px solid #d4af37;
+      color: #fef08a;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover {
+      background: #d4af37;
+      color: #0b0710;
+    }
+
+    .controls-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #d4af37;
+      color: #070509;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    }
+
+    .btn-primary:hover {
+      background: #fde047;
+      transform: scale(1.03);
+    }
+
+    .btn-secondary {
+      background: #27272a;
+      color: #f4f4f5;
+      border: 1px solid #52525b;
+    }
+
+    .btn-secondary:hover {
+      background: #3f3f46;
+    }
+
+    .btn-zip {
+      background: #047857;
+      color: #ffffff;
+      border: 2px solid #34d399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-zip:hover {
+      background: #059669;
+      transform: scale(1.03);
+    }
+
+    .select-dropdown {
+      background: #08030d;
+      color: #fde68a;
+      border: 1.5px solid #d4af37;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Print Container */
+    .print-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+      gap: 32px;
+    }
+
+    /* Print Rules */
     @page {
       size: A4 landscape;
       margin: 0;
@@ -355,18 +437,24 @@
   <!-- Controls Bar (Hidden during print) -->
   <header class="controls-bar no-print">
     <div class="controls-left">
-      <span style="font-size: 24px;">🗝️</span>
+      <span style="font-size: 26px;">🗝️</span>
       <div>
-        <div class="controls-title">Invitaciones VIP para Puertas (A4 Horizontal Pegadas Sin Espacios)</div>
-        <div class="controls-desc">Cartel completo 100% visible sin cajón + Nombre, Nick de Pareja, Nick del Oráculo, Clan, Fecha y Sello</div>
+        <div class="controls-title">Invitaciones de Puertas (A4 Horizontal Pegadas Sin Espacios)</div>
+        <div class="controls-desc" id="statusDesc">Hoja separada para imprimir en A4 apaisado</div>
       </div>
     </div>
 
-    <div class="controls-actions">
-      <!-- Selector de Pareja -->
-      <select id="coupleFilter" class="select-dropdown" onchange="filterCouples()">
-        <option value="all">Imprimir Todas las Parejas (23 Hojas A4)</option>
-        <option value="pareja_1">Pareja #1: Maria & Oscar (The Sounds)</option>
+    <!-- Mode Selector & Pagination -->
+    <div class="controls-center">
+      <div class="mode-toggles">
+        <button id="btnModeSingle" class="toggle-btn active" onclick="setMode('single')">📄 Hoja a Hoja (1 Pareja)</button>
+        <button id="btnModeAll" class="toggle-btn" onclick="setMode('all')">📚 Ver Todas (23 Hojas)</button>
+      </div>
+
+      <div id="singleNav" class="single-nav">
+        <button class="nav-btn" onclick="prevCouple()" title="Pareja Anterior">◀ Anterior</button>
+        <select id="coupleFilter" class="select-dropdown" onchange="onCoupleSelect()">
+          <option value="pareja_1">Pareja #1: Maria & Oscar (The Sounds)</option>
         <option value="pareja_2">Pareja #2: Diana & Manu (Didihot)</option>
         <option value="pareja_3">Pareja #3: Marta & Rodrigo (ROYMAR)</option>
         <option value="pareja_4">Pareja #4: Angela & Mario (Carabassi couple)</option>
@@ -389,12 +477,26 @@
         <option value="pareja_21">Pareja #21: Bea & Javi (Laztarazca)</option>
         <option value="pareja_22">Pareja #22: Carolina & Carlos (C&R)</option>
         <option value="pareja_23">Pareja #23: Elena & Jaime (Pinpon)</option>
-      </select>
+        </select>
+        <button class="nav-btn" onclick="nextCouple()" title="Pareja Siguiente">Siguiente ▶</button>
+      </div>
+    </div>
 
-      <!-- Botón Imprimir -->
-      <button class="btn btn-primary" onclick="window.print()">
-        🖨️ IMPRIMIR A4 HORIZONTAL
+    <div class="controls-actions">
+      <!-- Botón Imprimir Hoja Actual -->
+      <button id="btnPrintCurrent" class="btn btn-primary" onclick="printCurrent()">
+        🖨️ IMPRIMIR HOJA #1
       </button>
+
+      <!-- Botón Imprimir Todas -->
+      <button id="btnPrintAll" class="btn btn-secondary" onclick="printAll()" style="display: none;">
+        🖨️ IMPRIMIR LAS 23 HOJAS
+      </button>
+
+      <!-- Botón Descargar PDFs -->
+      <a href="PDFs_Copisteria_A4_Horizontal.zip" download class="btn btn-zip" title="Descargar paquete ZIP con los 23 PDFs individuales para llevar en PenDrive a la copistería">
+        💾 DESCARGAR 23 PDFs (ZIP)
+      </a>
     </div>
   </header>
 
@@ -491,7 +593,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #2 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_2">
@@ -583,7 +684,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #3 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_3">
@@ -675,7 +775,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #4 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_4">
@@ -767,7 +866,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #5 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_5">
@@ -859,7 +957,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #6 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_6">
@@ -951,7 +1048,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #7 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_7">
@@ -1043,7 +1139,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #8 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_8">
@@ -1135,7 +1230,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #9 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_9">
@@ -1227,7 +1321,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #10 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_10">
@@ -1319,7 +1412,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #11 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_11">
@@ -1411,7 +1503,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #12 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_12">
@@ -1503,7 +1594,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #13 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_13">
@@ -1595,7 +1685,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #14 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_14">
@@ -1687,7 +1776,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #15 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_15">
@@ -1779,7 +1867,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #16 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_16">
@@ -1871,7 +1958,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #17 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_17">
@@ -1963,7 +2049,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #18 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_18">
@@ -2055,7 +2140,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #19 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_19">
@@ -2147,7 +2231,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #20 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_20">
@@ -2239,7 +2322,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #21 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_21">
@@ -2331,7 +2413,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #22 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_22">
@@ -2423,7 +2504,6 @@
       </article>
 
     </section>
-  
 
     <!-- HOJA A4 HORIZONTAL PAREJA #23 (CARTEL COMPLETO LIMPIO SIN CAJÓN) -->
     <section class="door-sheet" id="pareja_23">
@@ -2515,22 +2595,102 @@
       </article>
 
     </section>
-  
   </main>
 
   <script>
-    function filterCouples() {
+    let currentCoupleIndex = 1;
+    let currentMode = 'single';
+
+    function updateView() {
+      const sheets = document.querySelectorAll('.door-sheet');
+      const nav = document.getElementById('singleNav');
+      const btnPrintCurrent = document.getElementById('btnPrintCurrent');
+      const btnPrintAll = document.getElementById('btnPrintAll');
+      const btnModeSingle = document.getElementById('btnModeSingle');
+      const btnModeAll = document.getElementById('btnModeAll');
+      const statusDesc = document.getElementById('statusDesc');
+
+      if (currentMode === 'single') {
+        btnModeSingle.classList.add('active');
+        btnModeAll.classList.remove('active');
+        nav.style.display = 'flex';
+        btnPrintCurrent.style.display = 'inline-flex';
+        btnPrintAll.style.display = 'none';
+
+        sheets.forEach((sheet, idx) => {
+          if (idx + 1 === currentCoupleIndex) {
+            sheet.style.display = 'flex';
+          } else {
+            sheet.style.display = 'none';
+          }
+        });
+
+        const select = document.getElementById('coupleFilter');
+        select.value = 'pareja_' + currentCoupleIndex;
+        const selectedText = select.options[select.selectedIndex].text;
+        statusDesc.textContent = 'Mostrando ' + selectedText + ' (1 hoja A4 separada)';
+        btnPrintCurrent.innerHTML = '🖨️ IMPRIMIR HOJA #' + currentCoupleIndex;
+      } else {
+        btnModeSingle.classList.remove('active');
+        btnModeAll.classList.add('active');
+        nav.style.display = 'none';
+        btnPrintCurrent.style.display = 'none';
+        btnPrintAll.style.display = 'inline-flex';
+
+        sheets.forEach(sheet => {
+          sheet.style.display = 'flex';
+        });
+        statusDesc.textContent = 'Mostrando todas las 23 parejas (una página por hoja)';
+      }
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      updateView();
+    }
+
+    function prevCouple() {
+      if (currentCoupleIndex > 1) {
+        currentCoupleIndex--;
+        updateView();
+      }
+    }
+
+    function nextCouple() {
+      const max = document.querySelectorAll('.door-sheet').length;
+      if (currentCoupleIndex < max) {
+        currentCoupleIndex++;
+        updateView();
+      }
+    }
+
+    function onCoupleSelect() {
       const select = document.getElementById('coupleFilter');
       const val = select.value;
-      const sheets = document.querySelectorAll('.door-sheet');
-      sheets.forEach(sheet => {
-        if (val === 'all' || sheet.id === val) {
-          sheet.style.display = 'flex';
-        } else {
-          sheet.style.display = 'none';
-        }
-      });
+      const match = val.match(/pareja_(\d+)/);
+      if (match) {
+        currentCoupleIndex = parseInt(match[1]);
+        currentMode = 'single';
+        updateView();
+      }
     }
+
+    function printCurrent() {
+      currentMode = 'single';
+      updateView();
+      window.print();
+    }
+
+    function printAll() {
+      currentMode = 'all';
+      updateView();
+      window.print();
+    }
+
+    // Inicializar mostrando sólo la Pareja 1 de forma limpia e individual
+    window.addEventListener('DOMContentLoaded', () => {
+      setMode('single');
+    });
   </script>
 </body>
 </html>
