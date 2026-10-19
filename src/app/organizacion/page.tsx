@@ -21,6 +21,7 @@ import {
   FileText,
   HeartHandshake,
   Printer,
+  Trophy,
 } from 'lucide-react';
 
 export default function OrganizacionPage() {
@@ -389,7 +390,15 @@ export default function OrganizacionPage() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-950 via-red-950 to-amber-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold"
             >
               <Printer className="w-4 h-4 text-gold" />
-              <span>🖨️ IMPRIMIR TARJETAS PUERTAS (A4)</span>
+              <span>🖨️ PUERTAS (A4)</span>
+            </Link>
+
+            <Link
+              href="/marcador-clanes"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-950 border-2 border-amber-400 text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] cursor-pointer font-bold"
+            >
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span>🏆 MARCADOR CLANES (A3)</span>
             </Link>
 
             <button
@@ -626,13 +635,23 @@ export default function OrganizacionPage() {
                 </p>
               </div>
 
-              <Link
-                href="/imprimir-parejas"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-950 via-red-950 to-amber-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold shrink-0"
-              >
-                <Printer className="w-4 h-4 text-gold" />
-                <span>🖨️ IMPRIMIR TARJETAS PUERTAS (A4)</span>
-              </Link>
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <Link
+                  href="/imprimir-parejas"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-950 via-red-950 to-amber-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold"
+                >
+                  <Printer className="w-4 h-4 text-gold" />
+                  <span>🖨️ PUERTAS (A4)</span>
+                </Link>
+
+                <Link
+                  href="/marcador-clanes"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-950 border-2 border-amber-400 text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] cursor-pointer font-bold"
+                >
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                  <span>🏆 MARCADOR CLANES (A3)</span>
+                </Link>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
