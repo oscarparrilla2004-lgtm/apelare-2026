@@ -168,7 +168,7 @@ export default function ImprimirParejasPage() {
                 <span>Invitaciones VIP para Puertas (A4 Horizontal Pegadas Sin Espacios)</span>
               </h1>
               <p className="text-[11px] text-white/60 font-sans hidden sm:block">
-                Cartel completo de fondo + Marco inferior traslúcido: Nombre, Nick de Pareja, Nick del Oráculo, Clan, Fecha y Sello
+                Cartel completo 100% visible sin cajón + Nombre, Nick de Pareja, Nick del Oráculo, Clan, Fecha y Sello
               </p>
             </div>
           </div>
@@ -301,47 +301,37 @@ export default function ImprimirParejasPage() {
                 <span style={{ position: 'absolute', bottom: '7mm', left: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, textShadow: '0 0 8px rgba(0,0,0,0.9)', pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
                 <span style={{ position: 'absolute', bottom: '7mm', right: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, textShadow: '0 0 8px rgba(0,0,0,0.9)', pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
 
-                {/* Lower Translucent Frame - PARTE DE ABAJO TRASLÚCIDA */}
+                {/* Lower Text Area (COMPLETAMENTE TRANSPARENTE, SIN CAJÓN NI FONDO) */}
                 <div
                   style={{
                     position: 'absolute',
-                    left: '7.5mm',
-                    right: '7.5mm',
-                    bottom: '7.5mm',
-                    height: '74mm',
-                    background:
-                      'linear-gradient(to bottom, rgba(5, 2, 8, 0.4) 0%, rgba(5, 2, 8, 0.72) 40%, rgba(5, 2, 8, 0.88) 100%)',
-                    backdropFilter: 'blur(2.5px)',
-                    WebkitBackdropFilter: 'blur(2.5px)',
-                    border: '1.5px solid rgba(212, 175, 55, 0.6)',
-                    borderRadius: '4px',
-                    padding: '3mm 4mm',
+                    left: '6mm',
+                    right: '6mm',
+                    bottom: '7mm',
+                    height: '76mm',
+                    background: 'none',
+                    border: 'none',
+                    boxShadow: 'none',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'space-evenly',
+                    justifyContent: 'flex-end',
                     textAlign: 'center',
-                    boxShadow: '0 4px 25px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5)',
                     zIndex: 5,
                   }}
                 >
-                  <span style={{ position: 'absolute', top: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-                  <span style={{ position: 'absolute', top: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-                  <span style={{ position: 'absolute', bottom: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-                  <span style={{ position: 'absolute', bottom: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-
                   {/* 1. Mortal Name */}
                   <h2
                     style={{
                       fontFamily: 'var(--font-cinzel), serif',
-                      fontSize: '24px',
+                      fontSize: '26px',
                       fontWeight: 900,
-                      letterSpacing: '2px',
+                      letterSpacing: '2.5px',
                       textTransform: 'uppercase',
-                      lineHeight: 1.05,
-                      color: '#fffbe6',
-                      textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.9)',
-                      marginTop: '1mm',
+                      lineHeight: 1.1,
+                      color: '#ffffff',
+                      textShadow: '0 2px 4px #000000, 0 0 10px #000000, 0 0 20px #000000, 0 0 30px #000000',
+                      marginBottom: '1mm',
                     }}
                   >
                     {c.chica.name}
@@ -351,13 +341,13 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       fontFamily: 'var(--font-cinzel), serif',
-                      fontSize: '13.5px',
-                      fontWeight: 800,
+                      fontSize: '15px',
+                      fontWeight: 900,
                       color: '#fef08a',
-                      letterSpacing: '1.5px',
+                      letterSpacing: '2px',
                       textTransform: 'uppercase',
-                      textShadow: '0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9)',
-                      marginTop: '0.5mm',
+                      textShadow: '0 2px 4px #000000, 0 0 8px #000000, 0 0 15px #000000, 0 0 25px #000000',
+                      marginBottom: '1.5mm',
                     }}
                   >
                     ({c.chica.coupleNick})
@@ -367,12 +357,12 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       fontFamily: 'var(--font-medieval), cursive',
-                      fontSize: '16px',
+                      fontSize: '17.5px',
                       fontStyle: 'italic',
                       color: '#fcd34d',
                       letterSpacing: '1px',
-                      textShadow: '0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9)',
-                      marginTop: '1mm',
+                      textShadow: '0 2px 4px #000000, 0 0 8px #000000, 0 0 15px #000000, 0 0 25px #000000',
+                      marginBottom: '2mm',
                     }}
                   >
                     «{c.chica.alias}»
@@ -382,19 +372,19 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       display: 'inline-block',
-                      background: 'rgba(139, 0, 0, 0.7)',
+                      background: 'rgba(139, 0, 0, 0.88)',
                       border: '1.5px solid #d4af37',
-                      borderRadius: '3px',
-                      padding: '3px 12px',
+                      borderRadius: '4px',
+                      padding: '3.5px 14px',
                       fontFamily: 'var(--font-inter), sans-serif',
-                      fontSize: '10px',
-                      fontWeight: 800,
+                      fontSize: '10.5px',
+                      fontWeight: 900,
                       color: '#fef08a',
                       letterSpacing: '1.5px',
                       textTransform: 'uppercase',
-                      marginTop: '1.5mm',
-                      boxShadow: '0 0 14px rgba(212, 175, 55, 0.35)',
-                      textShadow: '0 1px 6px rgba(0,0,0,0.9)',
+                      marginBottom: '2mm',
+                      boxShadow: '0 2px 12px rgba(0,0,0,0.9), 0 0 15px rgba(212, 175, 55, 0.4)',
+                      textShadow: '0 1px 4px #000000',
                     }}
                   >
                     ✦ CLAN: {c.chica.teamName.toUpperCase()} ✦
@@ -404,13 +394,13 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       fontFamily: 'var(--font-inter), sans-serif',
-                      fontSize: '8.5px',
-                      fontWeight: 700,
+                      fontSize: '9px',
+                      fontWeight: 800,
                       color: '#fde68a',
                       letterSpacing: '1.5px',
                       textTransform: 'uppercase',
-                      marginTop: '1.5mm',
-                      textShadow: '0 2px 6px rgba(0,0,0,0.95)',
+                      textShadow: '0 2px 4px #000000, 0 0 10px #000000, 0 0 20px #000000',
+                      marginBottom: '2mm',
                     }}
                   >
                     30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026
@@ -419,24 +409,23 @@ export default function ImprimirParejasPage() {
                   {/* 6. Stamped Red Wax Seal */}
                   <div
                     style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '40px',
+                      height: '40px',
                       borderRadius: '50%',
                       background:
                         'radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%)',
                       border: '2px solid #d4af37',
-                      boxShadow: '0 0 14px rgba(185, 28, 28, 0.8), inset 0 0 6px rgba(0,0,0,0.85)',
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.95), inset 0 0 6px rgba(0,0,0,0.85)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginTop: '1mm',
                     }}
                   >
                     <span
                       style={{
                         color: '#fef08a',
                         fontFamily: 'var(--font-cinzel), serif',
-                        fontSize: '18px',
+                        fontSize: '20px',
                         fontWeight: 900,
                         lineHeight: 1,
                         textShadow: '0 0 6px rgba(0,0,0,0.8)',
@@ -508,47 +497,37 @@ export default function ImprimirParejasPage() {
                 <span style={{ position: 'absolute', bottom: '7mm', left: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, textShadow: '0 0 8px rgba(0,0,0,0.9)', pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
                 <span style={{ position: 'absolute', bottom: '7mm', right: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, textShadow: '0 0 8px rgba(0,0,0,0.9)', pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
 
-                {/* Lower Translucent Frame - PARTE DE ABAJO TRASLÚCIDA */}
+                {/* Lower Text Area (COMPLETAMENTE TRANSPARENTE, SIN CAJÓN NI FONDO) */}
                 <div
                   style={{
                     position: 'absolute',
-                    left: '7.5mm',
-                    right: '7.5mm',
-                    bottom: '7.5mm',
-                    height: '74mm',
-                    background:
-                      'linear-gradient(to bottom, rgba(5, 2, 8, 0.4) 0%, rgba(5, 2, 8, 0.72) 40%, rgba(5, 2, 8, 0.88) 100%)',
-                    backdropFilter: 'blur(2.5px)',
-                    WebkitBackdropFilter: 'blur(2.5px)',
-                    border: '1.5px solid rgba(212, 175, 55, 0.6)',
-                    borderRadius: '4px',
-                    padding: '3mm 4mm',
+                    left: '6mm',
+                    right: '6mm',
+                    bottom: '7mm',
+                    height: '76mm',
+                    background: 'none',
+                    border: 'none',
+                    boxShadow: 'none',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'space-evenly',
+                    justifyContent: 'flex-end',
                     textAlign: 'center',
-                    boxShadow: '0 4px 25px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5)',
                     zIndex: 5,
                   }}
                 >
-                  <span style={{ position: 'absolute', top: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-                  <span style={{ position: 'absolute', top: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-                  <span style={{ position: 'absolute', bottom: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-                  <span style={{ position: 'absolute', bottom: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none' }}>✦</span>
-
                   {/* 1. Mortal Name */}
                   <h2
                     style={{
                       fontFamily: 'var(--font-cinzel), serif',
-                      fontSize: '24px',
+                      fontSize: '26px',
                       fontWeight: 900,
-                      letterSpacing: '2px',
+                      letterSpacing: '2.5px',
                       textTransform: 'uppercase',
-                      lineHeight: 1.05,
-                      color: '#fffbe6',
-                      textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.9)',
-                      marginTop: '1mm',
+                      lineHeight: 1.1,
+                      color: '#ffffff',
+                      textShadow: '0 2px 4px #000000, 0 0 10px #000000, 0 0 20px #000000, 0 0 30px #000000',
+                      marginBottom: '1mm',
                     }}
                   >
                     {c.chico.name}
@@ -558,13 +537,13 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       fontFamily: 'var(--font-cinzel), serif',
-                      fontSize: '13.5px',
-                      fontWeight: 800,
+                      fontSize: '15px',
+                      fontWeight: 900,
                       color: '#fef08a',
-                      letterSpacing: '1.5px',
+                      letterSpacing: '2px',
                       textTransform: 'uppercase',
-                      textShadow: '0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9)',
-                      marginTop: '0.5mm',
+                      textShadow: '0 2px 4px #000000, 0 0 8px #000000, 0 0 15px #000000, 0 0 25px #000000',
+                      marginBottom: '1.5mm',
                     }}
                   >
                     ({c.chico.coupleNick})
@@ -574,12 +553,12 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       fontFamily: 'var(--font-medieval), cursive',
-                      fontSize: '16px',
+                      fontSize: '17.5px',
                       fontStyle: 'italic',
                       color: '#fcd34d',
                       letterSpacing: '1px',
-                      textShadow: '0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9)',
-                      marginTop: '1mm',
+                      textShadow: '0 2px 4px #000000, 0 0 8px #000000, 0 0 15px #000000, 0 0 25px #000000',
+                      marginBottom: '2mm',
                     }}
                   >
                     «{c.chico.alias}»
@@ -589,19 +568,19 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       display: 'inline-block',
-                      background: 'rgba(139, 0, 0, 0.7)',
+                      background: 'rgba(139, 0, 0, 0.88)',
                       border: '1.5px solid #d4af37',
-                      borderRadius: '3px',
-                      padding: '3px 12px',
+                      borderRadius: '4px',
+                      padding: '3.5px 14px',
                       fontFamily: 'var(--font-inter), sans-serif',
-                      fontSize: '10px',
-                      fontWeight: 800,
+                      fontSize: '10.5px',
+                      fontWeight: 900,
                       color: '#fef08a',
                       letterSpacing: '1.5px',
                       textTransform: 'uppercase',
-                      marginTop: '1.5mm',
-                      boxShadow: '0 0 14px rgba(212, 175, 55, 0.35)',
-                      textShadow: '0 1px 6px rgba(0,0,0,0.9)',
+                      marginBottom: '2mm',
+                      boxShadow: '0 2px 12px rgba(0,0,0,0.9), 0 0 15px rgba(212, 175, 55, 0.4)',
+                      textShadow: '0 1px 4px #000000',
                     }}
                   >
                     ✦ CLAN: {c.chico.teamName.toUpperCase()} ✦
@@ -611,13 +590,13 @@ export default function ImprimirParejasPage() {
                   <div
                     style={{
                       fontFamily: 'var(--font-inter), sans-serif',
-                      fontSize: '8.5px',
-                      fontWeight: 700,
+                      fontSize: '9px',
+                      fontWeight: 800,
                       color: '#fde68a',
                       letterSpacing: '1.5px',
                       textTransform: 'uppercase',
-                      marginTop: '1.5mm',
-                      textShadow: '0 2px 6px rgba(0,0,0,0.95)',
+                      textShadow: '0 2px 4px #000000, 0 0 10px #000000, 0 0 20px #000000',
+                      marginBottom: '2mm',
                     }}
                   >
                     30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026
@@ -626,24 +605,23 @@ export default function ImprimirParejasPage() {
                   {/* 6. Stamped Red Wax Seal */}
                   <div
                     style={{
-                      width: '38px',
-                      height: '38px',
+                      width: '40px',
+                      height: '40px',
                       borderRadius: '50%',
                       background:
                         'radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%)',
                       border: '2px solid #d4af37',
-                      boxShadow: '0 0 14px rgba(185, 28, 28, 0.8), inset 0 0 6px rgba(0,0,0,0.85)',
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.95), inset 0 0 6px rgba(0,0,0,0.85)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginTop: '1mm',
                     }}
                   >
                     <span
                       style={{
                         color: '#fef08a',
                         fontFamily: 'var(--font-cinzel), serif',
-                        fontSize: '18px',
+                        fontSize: '20px',
                         fontWeight: 900,
                         lineHeight: 1,
                         textShadow: '0 0 6px rgba(0,0,0,0.8)',
