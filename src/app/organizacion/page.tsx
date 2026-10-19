@@ -20,6 +20,7 @@ import {
   Send,
   FileText,
   HeartHandshake,
+  Printer,
 } from 'lucide-react';
 
 export default function OrganizacionPage() {
@@ -383,6 +384,14 @@ export default function OrganizacionPage() {
               <span>DESCARGAR EXCEL / CSV (PAREJAS)</span>
             </button>
 
+            <Link
+              href="/imprimir-parejas"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-950 via-red-950 to-amber-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold"
+            >
+              <Printer className="w-4 h-4 text-gold" />
+              <span>🖨️ IMPRIMIR TARJETAS PUERTAS (A4)</span>
+            </Link>
+
             <button
               onClick={() => setShowResetConfirm(true)}
               className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-red-950/40 border border-red-500/50 text-red-300 text-xs font-gothic tracking-wider hover:bg-red-900/60 active:scale-95 transition-all cursor-pointer"
@@ -606,14 +615,24 @@ export default function OrganizacionPage() {
         {/* TAB 2: PAREJAS Y ANTI-COLISIÓN */}
         {activeTab === 'parejas' && (
           <div className="space-y-6 animate-fade-in">
-            <div className="p-5 rounded-2xl bg-black/60 border border-gold/30 backdrop-blur-md space-y-2">
-              <h3 className="text-lg font-gothic text-gold uppercase font-bold flex items-center gap-2">
-                <HeartHandshake className="w-5 h-5 text-gold" />
-                <span>SEGUIMIENTO DE LAS {COUPLES_CONFIG.length} PAREJAS (ANTI-COLISIÓN ACTIVO)</span>
-              </h3>
-              <p className="text-xs font-sans text-rose-200/80 italic">
-                El sistema garantiza que ningún miembro de una pareja coincida en el mismo clan. Cuando uno elige, el clan queda bloqueado para el otro.
-              </p>
+            <div className="p-5 rounded-2xl bg-black/60 border border-gold/30 backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h3 className="text-lg font-gothic text-gold uppercase font-bold flex items-center gap-2">
+                  <HeartHandshake className="w-5 h-5 text-gold" />
+                  <span>SEGUIMIENTO DE LAS {COUPLES_CONFIG.length} PAREJAS (ANTI-COLISIÓN ACTIVO)</span>
+                </h3>
+                <p className="text-xs font-sans text-rose-200/80 italic">
+                  El sistema garantiza que ningún miembro de una pareja coincida en el mismo clan. Cuando uno elige, el clan queda bloqueado para el otro.
+                </p>
+              </div>
+
+              <Link
+                href="/imprimir-parejas"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-950 via-red-950 to-amber-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold shrink-0"
+              >
+                <Printer className="w-4 h-4 text-gold" />
+                <span>🖨️ IMPRIMIR TARJETAS PUERTAS (A4)</span>
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
