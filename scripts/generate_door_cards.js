@@ -68,76 +68,13 @@ async function main() {
   ).join('\n        ');
 
   const sheetsHtml = couples.map(c => `
-    <!-- HOJA A4 HORIZONTAL PAREJA #${c.coupleIndex} (OCUPA TODO EL FOLIO, SIN ESPACIOS) -->
+    <!-- HOJA A4 HORIZONTAL PAREJA #${c.coupleIndex} (OCUPA TODO EL FOLIO, CARTEL COMPLETO TRASLÚCIDO) -->
     <section class="door-sheet" id="pareja_${c.coupleIndex}">
       
-      <!-- TARJETA IZQUIERDA: CHICA (INVITACIÓN VIP IDÉNTICA) -->
+      <!-- TARJETA IZQUIERDA: CHICA (CARTEL ENTERO CON INFORMACIÓN TRASLÚCIDA ABAJO) -->
       <article class="pass-half pass-half-left">
-        <!-- Background Poster Art -->
-        <div class="pass-poster-bg" style="background-image: url('${posterB64}');"></div>
-
-        <!-- Smooth Dark Gradient Transition -->
-        <div class="pass-gradient-overlay"></div>
-
-        <!-- Dark Solid Bottom Base -->
-        <div class="pass-bottom-backdrop"></div>
-
-        <!-- Outer Gold Ornate Border -->
-        <div class="pass-outer-border"></div>
-        <div class="pass-inner-dashed"></div>
-
-        <!-- Corner Gothic Runes -->
-        <span class="corner-rune cr-tl">𝕬</span>
-        <span class="corner-rune cr-tr">𝕬</span>
-        <span class="corner-rune cr-bl">𝕬</span>
-        <span class="corner-rune cr-br">="𝕬</span>
-
-        <!-- Lower Gothic Frame with Inner Accents -->
-        <div class="pass-lower-frame">
-          <span class="frame-star fs-tl">✦</span>
-          <span class="frame-star fs-tr">✦</span>
-          <span class="frame-star fs-bl">✦</span>
-          <span class="frame-star fs-br">✦</span>
-
-          <!-- Header: PASE SAGRADO DEL AKELARRE -->
-          <div class="pass-header-text">✦ PASE SAGRADO DEL AKELARRE ✦</div>
-
-          <!-- Mortal Name -->
-          <h1 class="pass-mortal-name">${c.chica.name}</h1>
-
-          <!-- Nick Ficticio de la Pareja (debajo del nombre) -->
-          <div class="pass-couple-nick">(${c.chica.coupleNick})</div>
-
-          <!-- Witch Nickname -->
-          <div class="pass-witch-alias">«${c.chica.alias}»</div>
-
-          <!-- Clan Badge -->
-          <div class="pass-clan-badge">
-            ✦ CLAN: ${c.chica.teamName.toUpperCase()} ✦
-          </div>
-
-          <!-- Fecha -->
-          <div class="pass-date-line">
-            <span>30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026</span>
-          </div>
-
-          <!-- Stamped Red Wax Seal -->
-          <div class="pass-wax-seal">
-            <span class="seal-rune">𝕬</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- TARJETA DERECHA: CHICO (INVITACIÓN VIP IDÉNTICA) -->
-      <article class="pass-half pass-half-right">
-        <!-- Background Poster Art -->
-        <div class="pass-poster-bg" style="background-image: url('${posterB64}');"></div>
-
-        <!-- Smooth Dark Gradient Transition -->
-        <div class="pass-gradient-overlay"></div>
-
-        <!-- Dark Solid Bottom Base -->
-        <div class="pass-bottom-backdrop"></div>
+        <!-- Full-Bleed Poster Art Background (Occupy 100% of card) -->
+        <div class="pass-full-poster" style="background-image: url('${posterB64}');"></div>
 
         <!-- Outer Gold Ornate Border -->
         <div class="pass-outer-border"></div>
@@ -149,36 +86,81 @@ async function main() {
         <span class="corner-rune cr-bl">𝕬</span>
         <span class="corner-rune cr-br">𝕬</span>
 
-        <!-- Lower Gothic Frame with Inner Accents -->
+        <!-- Lower Translucent Frame with Information -->
         <div class="pass-lower-frame">
           <span class="frame-star fs-tl">✦</span>
           <span class="frame-star fs-tr">✦</span>
           <span class="frame-star fs-bl">✦</span>
           <span class="frame-star fs-br">✦</span>
 
-          <!-- Header: PASE SAGRADO DEL AKELARRE -->
-          <div class="pass-header-text">✦ PASE SAGRADO DEL AKELARRE ✦</div>
+          <!-- 1. Mortal Name -->
+          <h1 class="pass-mortal-name">${c.chica.name}</h1>
 
-          <!-- Mortal Name -->
-          <h1 class="pass-mortal-name">${c.chico.name}</h1>
+          <!-- 2. Nick Ficticio de la Pareja (debajo del nombre) -->
+          <div class="pass-couple-nick">(${c.chica.coupleNick})</div>
 
-          <!-- Nick Ficticio de la Pareja (debajo del nombre) -->
-          <div class="pass-couple-nick">(${c.chico.coupleNick})</div>
+          <!-- 3. Nick Puesto por el Oráculo -->
+          <div class="pass-witch-alias">«${c.chica.alias}»</div>
 
-          <!-- Warlock Nickname -->
-          <div class="pass-witch-alias">«${c.chico.alias}»</div>
-
-          <!-- Clan Badge -->
+          <!-- 4. Clan Asignado -->
           <div class="pass-clan-badge">
-            ✦ CLAN: ${c.chico.teamName.toUpperCase()} ✦
+            ✦ CLAN: ${c.chica.teamName.toUpperCase()} ✦
           </div>
 
-          <!-- Fecha -->
+          <!-- 5. Fecha Oficial -->
           <div class="pass-date-line">
             <span>30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026</span>
           </div>
 
-          <!-- Stamped Red Wax Seal -->
+          <!-- 6. Stamped Red Wax Seal -->
+          <div class="pass-wax-seal">
+            <span class="seal-rune">𝕬</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- TARJETA DERECHA: CHICO (CARTEL ENTERO CON INFORMACIÓN TRASLÚCIDA ABAJO) -->
+      <article class="pass-half pass-half-right">
+        <!-- Full-Bleed Poster Art Background (Occupy 100% of card) -->
+        <div class="pass-full-poster" style="background-image: url('${posterB64}');"></div>
+
+        <!-- Outer Gold Ornate Border -->
+        <div class="pass-outer-border"></div>
+        <div class="pass-inner-dashed"></div>
+
+        <!-- Corner Gothic Runes -->
+        <span class="corner-rune cr-tl">𝕬</span>
+        <span class="corner-rune cr-tr">𝕬</span>
+        <span class="corner-rune cr-bl">𝕬</span>
+        <span class="corner-rune cr-br">𝕬</span>
+
+        <!-- Lower Translucent Frame with Information -->
+        <div class="pass-lower-frame">
+          <span class="frame-star fs-tl">✦</span>
+          <span class="frame-star fs-tr">✦</span>
+          <span class="frame-star fs-bl">✦</span>
+          <span class="frame-star fs-br">✦</span>
+
+          <!-- 1. Mortal Name -->
+          <h1 class="pass-mortal-name">${c.chico.name}</h1>
+
+          <!-- 2. Nick Ficticio de la Pareja (debajo del nombre) -->
+          <div class="pass-couple-nick">(${c.chico.coupleNick})</div>
+
+          <!-- 3. Nick Puesto por el Oráculo -->
+          <div class="pass-witch-alias">«${c.chico.alias}»</div>
+
+          <!-- 4. Clan Asignado -->
+          <div class="pass-clan-badge">
+            ✦ CLAN: ${c.chico.teamName.toUpperCase()} ✦
+          </div>
+
+          <!-- 5. Fecha Oficial -->
+          <div class="pass-date-line">
+            <span>30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026</span>
+          </div>
+
+          <!-- 6. Stamped Red Wax Seal -->
           <div class="pass-wax-seal">
             <span class="seal-rune">𝕬</span>
           </div>
@@ -205,7 +187,7 @@ async function main() {
     }
 
     body {
-      background-color: #120e18;
+      background-color: #0b0710;
       font-family: 'Inter', sans-serif;
       color: #ffffff;
       -webkit-font-smoothing: antialiased;
@@ -302,13 +284,13 @@ async function main() {
       gap: 32px;
     }
 
-    /* A4 Landscape Sheet (297mm x 210mm) - EXACTO, SIN ESPACIOS, OCUPA TODO */
+    /* A4 Landscape Sheet (297mm x 210mm) - EXACTO, OCUPA TODO, SIN ESPACIOS */
     .door-sheet {
       width: 297mm;
       height: 210mm;
       max-width: 297mm;
       max-height: 210mm;
-      background: #07040a;
+      background: #000000;
       padding: 0;
       margin: 0;
       display: flex;
@@ -316,7 +298,7 @@ async function main() {
       justify-content: stretch;
       align-items: stretch;
       overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.85);
       page-break-after: always;
       break-after: page;
     }
@@ -327,50 +309,29 @@ async function main() {
       height: 210mm;
       position: relative;
       overflow: hidden;
-      background: #07040a;
+      background: #000000;
       flex-shrink: 0;
     }
 
     .pass-half-left {
-      border-right: 1px solid rgba(212, 175, 55, 0.35);
+      border-right: 1px solid rgba(212, 175, 55, 0.4);
     }
 
     .pass-half-right {
-      border-left: 1px solid rgba(212, 175, 55, 0.35);
+      border-left: 1px solid rgba(212, 175, 55, 0.4);
     }
 
-    /* Poster Artwork Background */
-    .pass-poster-bg {
+    /* Full-Bleed Poster Background - CARTEL ENTERO VISIBLE 100% */
+    .pass-full-poster {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 126mm;
+      height: 100%;
       background-size: cover;
-      background-position: top center;
+      background-position: center top;
       background-repeat: no-repeat;
-    }
-
-    /* Smooth Gradient Transition */
-    .pass-gradient-overlay {
-      position: absolute;
-      top: 106mm;
-      left: 0;
-      width: 100%;
-      height: 20mm;
-      background: linear-gradient(to bottom, rgba(7, 4, 10, 0) 0%, rgba(7, 4, 10, 0.85) 60%, rgba(7, 4, 10, 1) 100%);
-      z-index: 2;
-    }
-
-    /* Solid Dark Bottom Backdrop */
-    .pass-bottom-backdrop {
-      position: absolute;
-      top: 126mm;
-      left: 0;
-      width: 100%;
-      height: 84mm;
-      background: #07040a;
-      z-index: 2;
+      z-index: 1;
     }
 
     /* Outer Gold Ornate Border */
@@ -405,6 +366,7 @@ async function main() {
       font-weight: 900;
       color: #d4af37;
       line-height: 1;
+      text-shadow: 0 0 8px rgba(0,0,0,0.9);
       pointer-events: none;
       z-index: 11;
     }
@@ -413,21 +375,25 @@ async function main() {
     .cr-bl { bottom: 7mm; left: 8mm; }
     .cr-br { bottom: 7mm; right: 8mm; }
 
-    /* Lower Gothic Parchment Frame */
+    /* Lower Translucent Frame - PARTE DE ABAJO TRASLÚCIDA PARA QUE SE VEA EL CARTEL */
     .pass-lower-frame {
       position: absolute;
-      top: 126mm;
       left: 7.5mm;
       right: 7.5mm;
       bottom: 7.5mm;
-      border: 1.5px solid rgba(212, 175, 55, 0.55);
+      height: 74mm;
+      background: linear-gradient(to bottom, rgba(5, 2, 8, 0.4) 0%, rgba(5, 2, 8, 0.72) 40%, rgba(5, 2, 8, 0.88) 100%);
+      backdrop-filter: blur(2.5px);
+      -webkit-backdrop-filter: blur(2.5px);
+      border: 1.5px solid rgba(212, 175, 55, 0.6);
       border-radius: 4px;
-      padding: 3.5mm 5mm;
+      padding: 3mm 4mm;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-evenly;
       text-align: center;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5);
       z-index: 5;
     }
 
@@ -437,6 +403,7 @@ async function main() {
       font-size: 11px;
       color: #d4af37;
       line-height: 1;
+      text-shadow: 0 0 6px rgba(0,0,0,0.9);
       pointer-events: none;
     }
     .fs-tl { top: 1.5mm; left: 2mm; }
@@ -444,31 +411,20 @@ async function main() {
     .fs-bl { bottom: 1.5mm; left: 2mm; }
     .fs-br { bottom: 1.5mm; right: 2mm; }
 
-    /* Header Text: ✦ PASE SAGRADO DEL AKELARRE ✦ */
-    .pass-header-text {
-      font-family: 'Inter', sans-serif;
-      font-size: 9px;
-      font-weight: 700;
-      color: #f3e5ab;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    /* Mortal Name */
+    /* 1. Mortal Name */
     .pass-mortal-name {
       font-family: 'Cinzel', serif;
       font-size: 24px;
       font-weight: 900;
-      letter-spacing: 2.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       line-height: 1.05;
-      background: linear-gradient(to bottom, #fffbe6 0%, #d4af37 50%, #aa8214 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #fffbe6;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.9);
       margin-top: 1mm;
     }
 
-    /* Nick Ficticio de Pareja (debajo del nombre) */
+    /* 2. Nick Ficticio de Pareja (debajo del nombre) */
     .pass-couple-nick {
       font-family: 'Cinzel', serif;
       font-size: 13.5px;
@@ -476,24 +432,25 @@ async function main() {
       color: #fef08a;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(254, 240, 138, 0.6);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9);
       margin-top: 0.5mm;
     }
 
-    /* Witch / Warlock Nickname */
+    /* 3. Nick Puesto por el Oráculo */
     .pass-witch-alias {
       font-family: 'MedievalSharp', cursive;
-      font-size: 15.5px;
+      font-size: 16px;
       font-style: italic;
       color: #fcd34d;
       letter-spacing: 1px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9);
       margin-top: 1mm;
     }
 
-    /* Clan Badge */
+    /* 4. Clan Badge */
     .pass-clan-badge {
       display: inline-block;
-      background: rgba(139, 0, 0, 0.65);
+      background: rgba(139, 0, 0, 0.7);
       border: 1.5px solid #d4af37;
       border-radius: 3px;
       padding: 3px 12px;
@@ -504,41 +461,43 @@ async function main() {
       letter-spacing: 1.5px;
       text-transform: uppercase;
       margin-top: 1.5mm;
-      box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
     }
 
-    /* Fecha */
+    /* 5. Fecha */
     .pass-date-line {
       font-family: 'Inter', sans-serif;
-      font-size: 8px;
+      font-size: 8.5px;
       font-weight: 700;
       color: #fde68a;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       margin-top: 1.5mm;
-      opacity: 0.95;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
-    /* Stamped Red Wax Seal */
+    /* 6. Stamped Red Wax Seal */
     .pass-wax-seal {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%);
       border: 2px solid #d4af37;
-      box-shadow: 0 0 12px rgba(185, 28, 28, 0.7), inset 0 0 6px rgba(0,0,0,0.8);
+      box-shadow: 0 0 14px rgba(185, 28, 28, 0.8), inset 0 0 6px rgba(0,0,0,0.85);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 1.5mm;
+      margin-top: 1mm;
     }
 
     .seal-rune {
       color: #fef08a;
       font-family: 'Cinzel', serif;
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 900;
       line-height: 1;
+      text-shadow: 0 0 6px rgba(0,0,0,0.8);
     }
 
     /* PRINT SPECIFIC CSS - OCUPA EL 100% DEL A4 SIN MÁRGENES */
@@ -588,7 +547,7 @@ async function main() {
       <span style="font-size: 24px;">🗝️</span>
       <div>
         <div class="controls-title">Invitaciones VIP para Puertas (A4 Horizontal Pegadas Sin Espacios)</div>
-        <div class="controls-desc">Cartel oficial + Nombre + Nick de Pareja + Apodo Brujo + Clan + Fecha + Sello (Chica izquierda, Chico derecha)</div>
+        <div class="controls-desc">Cartel completo de fondo + Marco inferior traslúcido: Nombre, Nick de Pareja, Nick del Oráculo, Clan, Fecha y Sello</div>
       </div>
     </div>
 
@@ -630,7 +589,7 @@ ${sheetsHtml}
 
   fs.writeFileSync(path.join(__dirname, '..', 'public', 'tarjetas_puertas_A4_horizontal.html'), html);
   fs.writeFileSync(path.join(__dirname, '..', 'tarjetas_puertas_A4_horizontal.html'), html);
-  console.log('Successfully generated full-bleed A4 horizontal door cards with couple nicknames and dates!');
+  console.log('Successfully generated full-bleed translucent poster door cards!');
 }
 
 main();
