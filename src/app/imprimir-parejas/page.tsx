@@ -16,12 +16,13 @@ interface ProcessedMember {
   gender: 'femenino' | 'masculino';
   alias: string;
   teamName: string;
-  teamIcon: string;
+  coupleNick: string;
 }
 
 interface ProcessedCouple {
   coupleIndex: number;
   id: string;
+  coupleNick: string;
   chica: ProcessedMember;
   chico: ProcessedMember;
 }
@@ -62,7 +63,7 @@ export default function ImprimirParejasPage() {
           gender: c.partner1.gender,
           alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : 'La Ocultista'),
           teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : 'Secta de la Vela Negra'),
-          teamIcon: m1?.teamIcon || (c.partner1.token === 'soraya' ? '🗝️' : '🕯️'),
+          coupleNick: c.nickname,
         };
 
         const p2Data: ProcessedMember = {
@@ -71,7 +72,7 @@ export default function ImprimirParejasPage() {
           gender: c.partner2.gender,
           alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : 'El Guardián del Pacto'),
           teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : 'Aquelarre del Éxtasis'),
-          teamIcon: m2?.teamIcon || (c.partner2.token === 'oscar' ? '🗝️' : '🍷'),
+          coupleNick: c.nickname,
         };
 
         const chica = c.partner1.gender === 'femenino' ? p1Data : p2Data;
@@ -80,6 +81,7 @@ export default function ImprimirParejasPage() {
         processed.push({
           coupleIndex: i + 1,
           id: c.id,
+          coupleNick: c.nickname,
           chica,
           chico,
         });
@@ -116,7 +118,11 @@ export default function ImprimirParejasPage() {
         }
 
         @media print {
-          body {
+          html, body {
+            width: 297mm !important;
+            height: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
             background: transparent !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -159,10 +165,10 @@ export default function ImprimirParejasPage() {
             <div>
               <h1 className="font-gothic font-bold text-amber-200 text-sm md:text-base uppercase tracking-wider flex items-center gap-2">
                 <span>🗝️</span>
-                <span>Pases VIP de Habitación por Parejas (A4 Horizontal)</span>
+                <span>Pases VIP de Pareja para Puertas (A4 Horizontal Pegadas Sin Espacios)</span>
               </h1>
               <p className="text-[11px] text-white/60 font-sans hidden sm:block">
-                Cartel oficial de la invitación + Nombre + Apodo + Clan + Sello de Lacre (Chica izquierda, Chico derecha)
+                Cartel oficial + Nombre + Nick de Pareja + Apodo Brujo + Clan + Fecha + Sello (Chica izquierda, Chico derecha)
               </p>
             </div>
           </div>
@@ -178,7 +184,7 @@ export default function ImprimirParejasPage() {
                 <option value="all">Todas las Parejas ({couples.length} Puertas)</option>
                 {couples.map((c) => (
                   <option key={c.id} value={c.id}>
-                    Puerta #{c.coupleIndex}: {c.chica.name} & {c.chico.name}
+                    Pareja #{c.coupleIndex}: {c.chica.name} & {c.chico.name} ({c.coupleNick})
                   </option>
                 ))}
               </select>
@@ -225,493 +231,495 @@ export default function ImprimirParejasPage() {
                 maxWidth: '297mm',
                 maxHeight: '210mm',
                 backgroundColor: '#07040a',
-                padding: '5mm 10mm',
-                position: 'relative',
+                padding: 0,
+                margin: 0,
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
+                flexDirection: 'row',
+                justifyContent: 'stretch',
+                alignItems: 'stretch',
                 overflow: 'hidden',
                 boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
               }}
             >
-              {/* Sheet Minimal Room Tag Header */}
-              <div
+              {/* TARJETA IZQUIERDA: CHICA (INVITACIÓN VIP IDÉNTICA) */}
+              <article
                 style={{
-                  height: '6mm',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0 8px',
-                  color: '#d4af37',
-                  fontFamily: 'var(--font-cinzel), serif',
-                  fontSize: '10px',
-                  letterSpacing: '1.5px',
-                  borderBottom: '1px solid rgba(212, 175, 55, 0.25)',
-                }}
-              >
-                <span style={{ fontWeight: 700, color: '#a1a1aa' }}>
-                  PUERTA DE HABITACIÓN · PAREJA #{c.coupleIndex}
-                </span>
-                <span style={{ fontWeight: 900, color: '#fef08a', letterSpacing: '2px' }}>
-                  {c.chica.name.toUpperCase()} &amp; {c.chico.name.toUpperCase()}
-                </span>
-                <span style={{ fontWeight: 600, color: 'rgba(212, 175, 55, 0.6)' }}>
-                  AKELARRE 2026
-                </span>
-              </div>
-
-              {/* Cards Pair Row (9:16 Aspect Ratio Identical to Downloaded Pass) */}
-              <div
-                style={{
-                  height: '191mm',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '16mm',
+                  width: '50%',
+                  height: '210mm',
                   position: 'relative',
+                  overflow: 'hidden',
+                  backgroundColor: '#07040a',
+                  borderRight: '1px solid rgba(212, 175, 55, 0.35)',
+                  flexShrink: 0,
                 }}
               >
-                {/* TARJETA IZQUIERDA: CHICA (INVITACIÓN IDENTICA AL PASE DESCARGADO) */}
-                <article
-                  style={{
-                    width: '107.5mm',
-                    height: '191mm',
-                    position: 'relative',
-                    borderRadius: '2px',
-                    overflow: 'hidden',
-                    backgroundColor: '#07040a',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
-                    flexShrink: 0,
-                  }}
-                >
-                  {/* Poster Art Background */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '118mm',
-                      backgroundImage: `url('/images/akelarre_poster.jpg')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'top center',
-                      backgroundRepeat: 'no-repeat',
-                    }}
-                  />
-
-                  {/* Smooth Gradient Transition */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '102mm',
-                      left: 0,
-                      width: '100%',
-                      height: '18mm',
-                      background:
-                        'linear-gradient(to bottom, rgba(7, 4, 10, 0) 0%, rgba(7, 4, 10, 0.85) 50%, rgba(7, 4, 10, 1) 100%)',
-                      zIndex: 2,
-                    }}
-                  />
-
-                  {/* Dark Solid Bottom Base */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '118mm',
-                      left: 0,
-                      width: '100%',
-                      height: '73mm',
-                      backgroundColor: '#07040a',
-                      zIndex: 2,
-                    }}
-                  />
-
-                  {/* Outer Gold Ornate Border */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '3mm',
-                      left: '3mm',
-                      right: '3mm',
-                      bottom: '3mm',
-                      border: '2px solid #d4af37',
-                      pointerEvents: 'none',
-                      zIndex: 10,
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '4.8mm',
-                      left: '4.8mm',
-                      right: '4.8mm',
-                      bottom: '4.8mm',
-                      border: '1px dashed rgba(212, 175, 55, 0.4)',
-                      pointerEvents: 'none',
-                      zIndex: 10,
-                    }}
-                  />
-
-                  {/* Corner Gothic Runes 𝕬 */}
-                  <span style={{ position: 'absolute', top: '6.5mm', left: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-                  <span style={{ position: 'absolute', top: '6.5mm', right: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-                  <span style={{ position: 'absolute', bottom: '6.5mm', left: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-                  <span style={{ position: 'absolute', bottom: '6.5mm', right: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-
-                  {/* Lower Gothic Parchment Frame */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '120mm',
-                      left: '7mm',
-                      right: '7mm',
-                      bottom: '7mm',
-                      border: '1px solid rgba(212, 175, 55, 0.55)',
-                      borderRadius: '4px',
-                      padding: '5mm 4mm',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      textAlign: 'center',
-                      zIndex: 5,
-                    }}
-                  >
-                    <span style={{ position: 'absolute', top: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-                    <span style={{ position: 'absolute', top: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-                    <span style={{ position: 'absolute', bottom: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-                    <span style={{ position: 'absolute', bottom: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-
-                    {/* Header */}
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-inter), sans-serif',
-                        fontSize: '8.5px',
-                        fontWeight: 700,
-                        color: '#f3e5ab',
-                        letterSpacing: '1.5px',
-                        textTransform: 'uppercase',
-                        marginTop: '1mm',
-                      }}
-                    >
-                      ✦ PASE SAGRADO DEL AKELARRE ✦
-                    </div>
-
-                    {/* Mortal Name */}
-                    <h2
-                      style={{
-                        fontFamily: 'var(--font-cinzel), serif',
-                        fontSize: '21px',
-                        fontWeight: 900,
-                        letterSpacing: '2px',
-                        textTransform: 'uppercase',
-                        lineHeight: 1.1,
-                        background: 'linear-gradient(to bottom, #fffbe6 0%, #d4af37 50%, #aa8214 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        marginTop: '1.5mm',
-                      }}
-                    >
-                      {c.chica.name}
-                    </h2>
-
-                    {/* Witch Nickname */}
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-medieval), cursive',
-                        fontSize: '14.5px',
-                        fontStyle: 'italic',
-                        color: '#fcd34d',
-                        letterSpacing: '1px',
-                        marginTop: '1mm',
-                      }}
-                    >
-                      «{c.chica.alias}»
-                    </div>
-
-                    {/* Clan Badge */}
-                    <div
-                      style={{
-                        display: 'inline-block',
-                        background: 'rgba(139, 0, 0, 0.65)',
-                        border: '1.5px solid #d4af37',
-                        borderRadius: '3px',
-                        padding: '3px 10px',
-                        fontFamily: 'var(--font-inter), sans-serif',
-                        fontSize: '9.5px',
-                        fontWeight: 800,
-                        color: '#fef08a',
-                        letterSpacing: '1.5px',
-                        textTransform: 'uppercase',
-                        marginTop: '2mm',
-                        boxShadow: '0 0 10px rgba(212, 175, 55, 0.25)',
-                      }}
-                    >
-                      ✦ CLAN: {c.chica.teamName.toUpperCase()} ✦
-                    </div>
-
-                    {/* Stamped Red Wax Seal */}
-                    <div
-                      style={{
-                        width: '38px',
-                        height: '38px',
-                        borderRadius: '50%',
-                        background:
-                          'radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%)',
-                        border: '2px solid #d4af37',
-                        boxShadow: '0 0 12px rgba(185, 28, 28, 0.7), inset 0 0 6px rgba(0,0,0,0.8)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginTop: '2.5mm',
-                        marginBottom: '1mm',
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: '#fef08a',
-                          fontFamily: 'var(--font-cinzel), serif',
-                          fontSize: '19px',
-                          fontWeight: 900,
-                          lineHeight: 1,
-                        }}
-                      >
-                        𝕬
-                      </span>
-                    </div>
-                  </div>
-                </article>
-
-                {/* Vertical Cut Guide Divider */}
+                {/* Poster Art Background */}
                 <div
                   style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '126mm',
+                    backgroundImage: `url('/images/akelarre_poster.jpg')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'top center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                />
+
+                {/* Smooth Gradient Transition */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '106mm',
+                    left: 0,
+                    width: '100%',
+                    height: '20mm',
+                    background:
+                      'linear-gradient(to bottom, rgba(7, 4, 10, 0) 0%, rgba(7, 4, 10, 0.85) 60%, rgba(7, 4, 10, 1) 100%)',
+                    zIndex: 2,
+                  }}
+                />
+
+                {/* Dark Solid Bottom Base */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '126mm',
+                    left: 0,
+                    width: '100%',
+                    height: '84mm',
+                    backgroundColor: '#07040a',
+                    zIndex: 2,
+                  }}
+                />
+
+                {/* Outer Gold Ornate Border */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '3.5mm',
+                    left: '3.5mm',
+                    right: '3.5mm',
+                    bottom: '3.5mm',
+                    border: '2px solid #d4af37',
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '5mm',
+                    left: '5mm',
+                    right: '5mm',
+                    bottom: '5mm',
+                    border: '1px dashed rgba(212, 175, 55, 0.45)',
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                  }}
+                />
+
+                {/* Corner Gothic Runes 𝕬 */}
+                <span style={{ position: 'absolute', top: '7mm', left: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+                <span style={{ position: 'absolute', top: '7mm', right: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+                <span style={{ position: 'absolute', bottom: '7mm', left: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+                <span style={{ position: 'absolute', bottom: '7mm', right: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+
+                {/* Lower Gothic Parchment Frame */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '126mm',
+                    left: '7.5mm',
+                    right: '7.5mm',
+                    bottom: '7.5mm',
+                    border: '1.5px solid rgba(212, 175, 55, 0.55)',
+                    borderRadius: '4px',
+                    padding: '3.5mm 5mm',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    height: '185mm',
-                    color: 'rgba(212, 175, 55, 0.35)',
-                    fontSize: '12px',
-                    borderLeft: '1px dashed rgba(212, 175, 55, 0.3)',
-                    padding: '6px 0',
+                    justifyContent: 'space-evenly',
+                    textAlign: 'center',
+                    zIndex: 5,
                   }}
                 >
-                  <span>✂</span>
-                  <span>✦</span>
-                  <span>✂</span>
-                </div>
+                  <span style={{ position: 'absolute', top: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                  <span style={{ position: 'absolute', top: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                  <span style={{ position: 'absolute', bottom: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                  <span style={{ position: 'absolute', bottom: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
 
-                {/* TARJETA DERECHA: CHICO (INVITACIÓN IDENTICA AL PASE DESCARGADO) */}
-                <article
-                  style={{
-                    width: '107.5mm',
-                    height: '191mm',
-                    position: 'relative',
-                    borderRadius: '2px',
-                    overflow: 'hidden',
-                    backgroundColor: '#07040a',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
-                    flexShrink: 0,
-                  }}
-                >
-                  {/* Poster Art Background */}
+                  {/* Header */}
                   <div
                     style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '118mm',
-                      backgroundImage: `url('/images/akelarre_poster.jpg')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'top center',
-                      backgroundRepeat: 'no-repeat',
-                    }}
-                  />
-
-                  {/* Smooth Gradient Transition */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '102mm',
-                      left: 0,
-                      width: '100%',
-                      height: '18mm',
-                      background:
-                        'linear-gradient(to bottom, rgba(7, 4, 10, 0) 0%, rgba(7, 4, 10, 0.85) 50%, rgba(7, 4, 10, 1) 100%)',
-                      zIndex: 2,
-                    }}
-                  />
-
-                  {/* Dark Solid Bottom Base */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '118mm',
-                      left: 0,
-                      width: '100%',
-                      height: '73mm',
-                      backgroundColor: '#07040a',
-                      zIndex: 2,
-                    }}
-                  />
-
-                  {/* Outer Gold Ornate Border */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '3mm',
-                      left: '3mm',
-                      right: '3mm',
-                      bottom: '3mm',
-                      border: '2px solid #d4af37',
-                      pointerEvents: 'none',
-                      zIndex: 10,
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '4.8mm',
-                      left: '4.8mm',
-                      right: '4.8mm',
-                      bottom: '4.8mm',
-                      border: '1px dashed rgba(212, 175, 55, 0.4)',
-                      pointerEvents: 'none',
-                      zIndex: 10,
-                    }}
-                  />
-
-                  {/* Corner Gothic Runes 𝕬 */}
-                  <span style={{ position: 'absolute', top: '6.5mm', left: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-                  <span style={{ position: 'absolute', top: '6.5mm', right: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-                  <span style={{ position: 'absolute', bottom: '6.5mm', left: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-                  <span style={{ position: 'absolute', bottom: '6.5mm', right: '7.5mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '14px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
-
-                  {/* Lower Gothic Parchment Frame */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '120mm',
-                      left: '7mm',
-                      right: '7mm',
-                      bottom: '7mm',
-                      border: '1px solid rgba(212, 175, 55, 0.55)',
-                      borderRadius: '4px',
-                      padding: '5mm 4mm',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      textAlign: 'center',
-                      zIndex: 5,
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      fontSize: '9px',
+                      fontWeight: 700,
+                      color: '#f3e5ab',
+                      letterSpacing: '2px',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    <span style={{ position: 'absolute', top: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-                    <span style={{ position: 'absolute', top: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-                    <span style={{ position: 'absolute', bottom: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
-                    <span style={{ position: 'absolute', bottom: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                    ✦ PASE SAGRADO DEL AKELARRE ✦
+                  </div>
+
+                  {/* Mortal Name */}
+                  <h2
+                    style={{
+                      fontFamily: 'var(--font-cinzel), serif',
+                      fontSize: '24px',
+                      fontWeight: 900,
+                      letterSpacing: '2.5px',
+                      textTransform: 'uppercase',
+                      lineHeight: 1.05,
+                      background: 'linear-gradient(to bottom, #fffbe6 0%, #d4af37 50%, #aa8214 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      marginTop: '1mm',
+                    }}
+                  >
+                    {c.chica.name}
+                  </h2>
+
+                  {/* Nick Ficticio de la Pareja (debajo del nombre) */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-cinzel), serif',
+                      fontSize: '13.5px',
+                      fontWeight: 800,
+                      color: '#fef08a',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      textShadow: '0 0 10px rgba(254, 240, 138, 0.6)',
+                      marginTop: '0.5mm',
+                    }}
+                  >
+                    ({c.chica.coupleNick})
+                  </div>
+
+                  {/* Witch Nickname */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-medieval), cursive',
+                      fontSize: '15.5px',
+                      fontStyle: 'italic',
+                      color: '#fcd34d',
+                      letterSpacing: '1px',
+                      marginTop: '1mm',
+                    }}
+                  >
+                    «{c.chica.alias}»
+                  </div>
+
+                  {/* Clan Badge */}
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      background: 'rgba(139, 0, 0, 0.65)',
+                      border: '1.5px solid #d4af37',
+                      borderRadius: '3px',
+                      padding: '3px 12px',
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      color: '#fef08a',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      marginTop: '1.5mm',
+                      boxShadow: '0 0 12px rgba(212, 175, 55, 0.25)',
+                    }}
+                  >
+                    ✦ CLAN: {c.chica.teamName.toUpperCase()} ✦
+                  </div>
+
+                  {/* Fecha */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      fontSize: '8px',
+                      fontWeight: 700,
+                      color: '#fde68a',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      marginTop: '1.5mm',
+                      opacity: 0.95,
+                    }}
+                  >
+                    30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026
+                  </div>
+
+                  {/* Stamped Red Wax Seal */}
+                  <div
+                    style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '50%',
+                      background:
+                        'radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%)',
+                      border: '2px solid #d4af37',
+                      boxShadow: '0 0 12px rgba(185, 28, 28, 0.7), inset 0 0 6px rgba(0,0,0,0.8)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: '1.5mm',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: '#fef08a',
+                        fontFamily: 'var(--font-cinzel), serif',
+                        fontSize: '19px',
+                        fontWeight: 900,
+                        lineHeight: 1,
+                      }}
+                    >
+                      𝕬
+                    </span>
+                  </div>
+                </div>
+              </article>
+
+              {/* TARJETA DERECHA: CHICO (INVITACIÓN VIP IDÉNTICA) */}
+              <article
+                style={{
+                  width: '50%',
+                  height: '210mm',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backgroundColor: '#07040a',
+                  borderLeft: '1px solid rgba(212, 175, 55, 0.35)',
+                  flexShrink: 0,
+                }}
+              >
+                {/* Poster Art Background */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '126mm',
+                    backgroundImage: `url('/images/akelarre_poster.jpg')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'top center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                />
+
+                {/* Smooth Gradient Transition */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '106mm',
+                    left: 0,
+                    width: '100%',
+                    height: '20mm',
+                    background:
+                      'linear-gradient(to bottom, rgba(7, 4, 10, 0) 0%, rgba(7, 4, 10, 0.85) 60%, rgba(7, 4, 10, 1) 100%)',
+                    zIndex: 2,
+                  }}
+                />
+
+                {/* Dark Solid Bottom Base */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '126mm',
+                    left: 0,
+                    width: '100%',
+                    height: '84mm',
+                    backgroundColor: '#07040a',
+                    zIndex: 2,
+                  }}
+                />
+
+                {/* Outer Gold Ornate Border */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '3.5mm',
+                    left: '3.5mm',
+                    right: '3.5mm',
+                    bottom: '3.5mm',
+                    border: '2px solid #d4af37',
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '5mm',
+                    left: '5mm',
+                    right: '5mm',
+                    bottom: '5mm',
+                    border: '1px dashed rgba(212, 175, 55, 0.45)',
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                  }}
+                />
+
+                {/* Corner Gothic Runes 𝕬 */}
+                <span style={{ position: 'absolute', top: '7mm', left: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+                <span style={{ position: 'absolute', top: '7mm', right: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+                <span style={{ position: 'absolute', bottom: '7mm', left: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+                <span style={{ position: 'absolute', bottom: '7mm', right: '8mm', fontFamily: 'var(--font-cinzel), serif', fontSize: '15px', fontWeight: 900, color: '#d4af37', lineHeight: 1, pointerEvents: 'none', zIndex: 11 }}>𝕬</span>
+
+                {/* Lower Gothic Parchment Frame */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '126mm',
+                    left: '7.5mm',
+                    right: '7.5mm',
+                    bottom: '7.5mm',
+                    border: '1.5px solid rgba(212, 175, 55, 0.55)',
+                    borderRadius: '4px',
+                    padding: '3.5mm 5mm',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'space-evenly',
+                    textAlign: 'center',
+                    zIndex: 5,
+                  }}
+                >
+                  <span style={{ position: 'absolute', top: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                  <span style={{ position: 'absolute', top: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                  <span style={{ position: 'absolute', bottom: '1.5mm', left: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
+                  <span style={{ position: 'absolute', bottom: '1.5mm', right: '2mm', fontSize: '11px', color: '#d4af37', lineHeight: 1, pointerEvents: 'none' }}>✦</span>
 
                     {/* Header */}
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-inter), sans-serif',
-                        fontSize: '8.5px',
-                        fontWeight: 700,
-                        color: '#f3e5ab',
-                        letterSpacing: '1.5px',
-                        textTransform: 'uppercase',
-                        marginTop: '1mm',
-                      }}
-                    >
-                      ✦ PASE SAGRADO DEL AKELARRE ✦
-                    </div>
-
-                    {/* Mortal Name */}
-                    <h2
-                      style={{
-                        fontFamily: 'var(--font-cinzel), serif',
-                        fontSize: '21px',
-                        fontWeight: 900,
-                        letterSpacing: '2px',
-                        textTransform: 'uppercase',
-                        lineHeight: 1.1,
-                        background: 'linear-gradient(to bottom, #fffbe6 0%, #d4af37 50%, #aa8214 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        marginTop: '1.5mm',
-                      }}
-                    >
-                      {c.chico.name}
-                    </h2>
-
-                    {/* Warlock Nickname */}
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-medieval), cursive',
-                        fontSize: '14.5px',
-                        fontStyle: 'italic',
-                        color: '#fcd34d',
-                        letterSpacing: '1px',
-                        marginTop: '1mm',
-                      }}
-                    >
-                      «{c.chico.alias}»
-                    </div>
-
-                    {/* Clan Badge */}
-                    <div
-                      style={{
-                        display: 'inline-block',
-                        background: 'rgba(139, 0, 0, 0.65)',
-                        border: '1.5px solid #d4af37',
-                        borderRadius: '3px',
-                        padding: '3px 10px',
-                        fontFamily: 'var(--font-inter), sans-serif',
-                        fontSize: '9.5px',
-                        fontWeight: 800,
-                        color: '#fef08a',
-                        letterSpacing: '1.5px',
-                        textTransform: 'uppercase',
-                        marginTop: '2mm',
-                        boxShadow: '0 0 10px rgba(212, 175, 55, 0.25)',
-                      }}
-                    >
-                      ✦ CLAN: {c.chico.teamName.toUpperCase()} ✦
-                    </div>
-
-                    {/* Stamped Red Wax Seal */}
-                    <div
-                      style={{
-                        width: '38px',
-                        height: '38px',
-                        borderRadius: '50%',
-                        background:
-                          'radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%)',
-                        border: '2px solid #d4af37',
-                        boxShadow: '0 0 12px rgba(185, 28, 28, 0.7), inset 0 0 6px rgba(0,0,0,0.8)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginTop: '2.5mm',
-                        marginBottom: '1mm',
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: '#fef08a',
-                          fontFamily: 'var(--font-cinzel), serif',
-                          fontSize: '19px',
-                          fontWeight: 900,
-                          lineHeight: 1,
-                        }}
-                      >
-                        𝕬
-                      </span>
-                    </div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      fontSize: '9px',
+                      fontWeight: 700,
+                      color: '#f3e5ab',
+                      letterSpacing: '2px',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    ✦ PASE SAGRADO DEL AKELARRE ✦
                   </div>
-                </article>
-              </div>
+
+                  {/* Mortal Name */}
+                  <h2
+                    style={{
+                      fontFamily: 'var(--font-cinzel), serif',
+                      fontSize: '24px',
+                      fontWeight: 900,
+                      letterSpacing: '2.5px',
+                      textTransform: 'uppercase',
+                      lineHeight: 1.05,
+                      background: 'linear-gradient(to bottom, #fffbe6 0%, #d4af37 50%, #aa8214 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      marginTop: '1mm',
+                    }}
+                  >
+                    {c.chico.name}
+                  </h2>
+
+                  {/* Nick Ficticio de la Pareja (debajo del nombre) */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-cinzel), serif',
+                      fontSize: '13.5px',
+                      fontWeight: 800,
+                      color: '#fef08a',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      textShadow: '0 0 10px rgba(254, 240, 138, 0.6)',
+                      marginTop: '0.5mm',
+                    }}
+                  >
+                    ({c.chico.coupleNick})
+                  </div>
+
+                  {/* Warlock Nickname */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-medieval), cursive',
+                      fontSize: '15.5px',
+                      fontStyle: 'italic',
+                      color: '#fcd34d',
+                      letterSpacing: '1px',
+                      marginTop: '1mm',
+                    }}
+                  >
+                    «{c.chico.alias}»
+                  </div>
+
+                  {/* Clan Badge */}
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      background: 'rgba(139, 0, 0, 0.65)',
+                      border: '1.5px solid #d4af37',
+                      borderRadius: '3px',
+                      padding: '3px 12px',
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      color: '#fef08a',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      marginTop: '1.5mm',
+                      boxShadow: '0 0 12px rgba(212, 175, 55, 0.25)',
+                    }}
+                  >
+                    ✦ CLAN: {c.chico.teamName.toUpperCase()} ✦
+                  </div>
+
+                  {/* Fecha */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      fontSize: '8px',
+                      fontWeight: 700,
+                      color: '#fde68a',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      marginTop: '1.5mm',
+                      opacity: 0.95,
+                    }}
+                  >
+                    30 DE OCTUBRE AL 1 DE NOVIEMBRE 2026
+                  </div>
+
+                  {/* Stamped Red Wax Seal */}
+                  <div
+                    style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '50%',
+                      background:
+                        'radial-gradient(circle at 35% 35%, #b91c1c 0%, #8b0000 70%, #450a0a 100%)',
+                      border: '2px solid #d4af37',
+                      boxShadow: '0 0 12px rgba(185, 28, 28, 0.7), inset 0 0 6px rgba(0,0,0,0.8)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: '1.5mm',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: '#fef08a',
+                        fontFamily: 'var(--font-cinzel), serif',
+                        fontSize: '19px',
+                        fontWeight: 900,
+                        lineHeight: 1,
+                      }}
+                    >
+                      𝕬
+                    </span>
+                  </div>
+                </div>
+              </article>
             </section>
           ))
         )}

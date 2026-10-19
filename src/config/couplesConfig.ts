@@ -1,5 +1,6 @@
 export interface CoupleDefinition {
   id: string;
+  nickname: string;
   partner1: {
     name: string;
     token: string;
@@ -15,116 +16,139 @@ export interface CoupleDefinition {
 export const COUPLES_CONFIG: CoupleDefinition[] = [
   {
     id: 'pareja_1',
+    nickname: 'The Sounds',
     partner1: { name: 'Maria', token: 'maria', gender: 'femenino' },
     partner2: { name: 'Oscar', token: 'oscar', gender: 'masculino' },
   },
   {
     id: 'pareja_2',
+    nickname: 'Didihot',
     partner1: { name: 'Diana', token: 'diana', gender: 'femenino' },
     partner2: { name: 'Manu', token: 'manu', gender: 'masculino' },
   },
   {
     id: 'pareja_3',
+    nickname: 'ROYMAR',
     partner1: { name: 'Marta', token: 'marta', gender: 'femenino' },
     partner2: { name: 'Rodrigo', token: 'rodrigo', gender: 'masculino' },
   },
   {
     id: 'pareja_4',
+    nickname: 'Carabassi couple',
     partner1: { name: 'Angela', token: 'angela-mario', gender: 'femenino' },
     partner2: { name: 'Mario', token: 'mario', gender: 'masculino' },
   },
   {
     id: 'pareja_5',
+    nickname: 'Chupa chups',
     partner1: { name: 'Oihana', token: 'oihana', gender: 'femenino' },
     partner2: { name: 'Oskartxo', token: 'oskartxo', gender: 'masculino' },
   },
   {
     id: 'pareja_6',
+    nickname: 'Sextorm',
     partner1: { name: 'Carmen', token: 'carmen', gender: 'femenino' },
     partner2: { name: 'Jorge', token: 'jorge-carmen', gender: 'masculino' },
   },
   {
     id: 'pareja_7',
+    nickname: 'Milka',
     partner1: { name: 'Sandra', token: 'sandra', gender: 'femenino' },
     partner2: { name: 'Adrián', token: 'adrian', gender: 'masculino' },
   },
   {
     id: 'pareja_8',
+    nickname: 'Garnacha',
     partner1: { name: 'Laura', token: 'laura', gender: 'femenino' },
     partner2: { name: 'Charly', token: 'charly', gender: 'masculino' },
   },
   {
     id: 'pareja_9',
+    nickname: 'Conlosdos',
     partner1: { name: 'Angela', token: 'angela-jaime', gender: 'femenino' },
     partner2: { name: 'Jaime', token: 'jaime', gender: 'masculino' },
   },
   {
     id: 'pareja_10',
+    nickname: 'Soranto',
     partner1: { name: 'Soraya', token: 'soraya', gender: 'femenino' },
     partner2: { name: 'Antonio', token: 'antonio', gender: 'masculino' },
   },
   {
     id: 'pareja_11',
+    nickname: 'Copasypeca2',
     partner1: { name: 'Nuria', token: 'nuria', gender: 'femenino' },
     partner2: { name: 'Marco', token: 'marco', gender: 'masculino' },
   },
   {
     id: 'pareja_12',
+    nickname: 'Arysam',
     partner1: { name: 'Aimara', token: 'aimara', gender: 'femenino' },
     partner2: { name: 'Abel', token: 'abel', gender: 'masculino' },
   },
   {
     id: 'pareja_13',
+    nickname: 'Los charros',
     partner1: { name: 'Elena', token: 'elena', gender: 'femenino' },
     partner2: { name: 'Dani', token: 'dani', gender: 'masculino' },
   },
   {
     id: 'pareja_14',
+    nickname: 'Tímidos y Curiosos',
     partner1: { name: 'Susana', token: 'susana', gender: 'femenino' },
     partner2: { name: 'Coke', token: 'coke', gender: 'masculino' },
   },
   {
     id: 'pareja_15',
+    nickname: 'Apolo y Dafne',
     partner1: { name: 'Sara', token: 'sara-pablo', gender: 'femenino' },
     partner2: { name: 'Pablo', token: 'pablo', gender: 'masculino' },
   },
   {
     id: 'pareja_16',
+    nickname: 'Openmind',
     partner1: { name: 'Ana', token: 'ana', gender: 'femenino' },
     partner2: { name: 'Julian', token: 'julian', gender: 'masculino' },
   },
   {
     id: 'pareja_17',
+    nickname: 'Nórdicos',
     partner1: { name: 'Sara', token: 'sara-rober', gender: 'femenino' },
     partner2: { name: 'Rober', token: 'rober', gender: 'masculino' },
   },
   {
     id: 'pareja_18',
+    nickname: 'Pornaventura',
     partner1: { name: 'Nana', token: 'nana', gender: 'femenino' },
     partner2: { name: 'Alber', token: 'alber', gender: 'masculino' },
   },
   {
     id: 'pareja_19',
+    nickname: '308 Parejita',
     partner1: { name: 'Bea', token: 'bea-sergio', gender: 'femenino' },
     partner2: { name: 'Sergio', token: 'sergio', gender: 'masculino' },
   },
   {
     id: 'pareja_20',
+    nickname: 'JorgeyAran',
     partner1: { name: 'Aran', token: 'aran', gender: 'femenino' },
     partner2: { name: 'Jorge', token: 'jorge-aran', gender: 'masculino' },
   },
   {
     id: 'pareja_21',
+    nickname: 'Laztarazca',
     partner1: { name: 'Bea', token: 'bea-javi', gender: 'femenino' },
     partner2: { name: 'Javi', token: 'javi', gender: 'masculino' },
   },
   {
     id: 'pareja_22',
+    nickname: 'C&R',
     partner1: { name: 'Carolina', token: 'carolina', gender: 'femenino' },
     partner2: { name: 'Carlos', token: 'carlos', gender: 'masculino' },
   },
   {
     id: 'pareja_23',
+    nickname: 'Pinpon',
     partner1: { name: 'Elena', token: 'elena-jaime', gender: 'femenino' },
     partner2: { name: 'Jaime', token: 'jaime-elena', gender: 'masculino' },
   },
@@ -157,7 +181,7 @@ export function getSpouseInfoByToken(token: string) {
 }
 
 /**
- * Obtiene la lista plana de los 42 invitados con sus datos
+ * Obtiene la lista plana de los 46 invitados con sus datos
  */
 export function getAllGuestsFlat() {
   const list: {
