@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-function buildHtml(clansPosition = 'right') {
+function buildHtml(clansPosition = 'left') {
   const isRight = clansPosition === 'right';
 
   const pruebas = [
@@ -782,22 +782,22 @@ function buildHtml(clansPosition = 'right') {
 async function main() {
   console.log('Generating A3 Clan Scoreboard...');
 
-  const htmlRight = buildHtml('right');
   const htmlLeft = buildHtml('left');
+  const htmlRight = buildHtml('right');
 
-  // Write HTMLs to public and root
+  // Write HTMLs to public and root (default is Clanes a la Izquierda)
   const publicDir = path.join(__dirname, '..', 'public');
   const rootDir = path.join(__dirname, '..');
 
-  fs.writeFileSync(path.join(publicDir, 'marcador_clanes_A3.html'), htmlRight);
-  fs.writeFileSync(path.join(rootDir, 'marcador_clanes_A3.html'), htmlRight);
+  fs.writeFileSync(path.join(publicDir, 'marcador_clanes_A3.html'), htmlLeft);
+  fs.writeFileSync(path.join(rootDir, 'marcador_clanes_A3.html'), htmlLeft);
 
-  fs.writeFileSync(path.join(publicDir, 'marcador_clanes_A3_derecha.html'), htmlRight);
   fs.writeFileSync(path.join(publicDir, 'marcador_clanes_A3_izquierda.html'), htmlLeft);
+  fs.writeFileSync(path.join(publicDir, 'marcador_clanes_A3_derecha.html'), htmlRight);
 
   console.log('✅ HTML files generated:');
-  console.log('   - public/marcador_clanes_A3.html (Clanes a la Derecha - Oficial)');
-  console.log('   - public/marcador_clanes_A3_izquierda.html (Clanes a la Izquierda)');
+  console.log('   - public/marcador_clanes_A3.html (Clanes a la Izquierda - Oficial)');
+  console.log('   - public/marcador_clanes_A3_derecha.html (Clanes a la Derecha - Alternativo)');
 
   // Convert to high-resolution A3 PDFs using Google Chrome Headless
   const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -806,20 +806,20 @@ async function main() {
 
     const pdfOfficialPath = path.join(publicDir, 'marcador_clanes_A3.pdf');
     const pdfOfficialRoot = path.join(rootDir, 'marcador_clanes_A3.pdf');
-    const pdfRightPath = path.join(publicDir, 'Marcador_Clanes_A3_Horizontal_(Clanes_Derecha).pdf');
     const pdfLeftPath = path.join(publicDir, 'Marcador_Clanes_A3_Horizontal_(Clanes_Izquierda).pdf');
+    const pdfRightPath = path.join(publicDir, 'Marcador_Clanes_A3_Horizontal_(Clanes_Derecha).pdf');
 
-    const htmlRightPath = path.join(publicDir, 'marcador_clanes_A3_derecha.html');
     const htmlLeftPath = path.join(publicDir, 'marcador_clanes_A3_izquierda.html');
+    const htmlRightPath = path.join(publicDir, 'marcador_clanes_A3_derecha.html');
 
     try {
-      execSync(`"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfOfficialPath}" --print-to-pdf-no-header "file://${htmlRightPath}"`, { stdio: 'ignore' });
+      execSync(`"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfOfficialPath}" --print-to-pdf-no-header "file://${htmlLeftPath}"`, { stdio: 'ignore' });
       fs.copyFileSync(pdfOfficialPath, pdfOfficialRoot);
-      fs.copyFileSync(pdfOfficialPath, pdfRightPath);
-      console.log('✅ Generated marcador_clanes_A3.pdf (A3 Landscape, Clanes a la Derecha)');
+      fs.copyFileSync(pdfOfficialPath, pdfLeftPath);
+      console.log('✅ Generated marcador_clanes_A3.pdf (A3 Landscape, Clanes a la Izquierda - Oficial)');
 
-      execSync(`"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfLeftPath}" --print-to-pdf-no-header "file://${htmlLeftPath}"`, { stdio: 'ignore' });
-      console.log('✅ Generated Marcador_Clanes_A3_Horizontal_(Clanes_Izquierda).pdf');
+      execSync(`"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfRightPath}" --print-to-pdf-no-header "file://${htmlRightPath}"`, { stdio: 'ignore' });
+      console.log('✅ Generated Marcador_Clanes_A3_Horizontal_(Clanes_Derecha).pdf');
     } catch (e) {
       console.error('Error generating PDF:', e.message);
     }

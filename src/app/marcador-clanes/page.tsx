@@ -31,7 +31,7 @@ interface ClanDef {
 }
 
 export default function MarcadorClanesPage() {
-  const [clansPosition, setClansPosition] = useState<'right' | 'left'>('right');
+  const [clansPosition, setClansPosition] = useState<'right' | 'left'>('left');
 
   const pruebas: PruebaDef[] = [
     { num: 1, name: 'PRUEBA 1', icon: '🎯', desc: 'Puntería / Diana' },
