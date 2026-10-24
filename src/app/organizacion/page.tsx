@@ -218,7 +218,7 @@ export default function OrganizacionPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Archivo Excel/CSV descargado con las 21 parejas');
+    showToast(`Archivo Excel/CSV descargado con las ${COUPLES_CONFIG.length} parejas`);
   };
 
   const handleDeleteMember = async () => {

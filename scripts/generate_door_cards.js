@@ -51,8 +51,8 @@ async function main() {
       name: c.partner1.name,
       token: c.partner1.token,
       gender: c.partner1.gender,
-      alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : 'La Ocultista'),
-      teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : 'Secta de la Vela Negra'),
+      alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Hechicera' : 'La Ocultista')),
+      teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Aquelarre del Éxtasis' : 'Secta de la Vela Negra')),
       coupleNick: c.nickname,
     };
 
@@ -60,8 +60,8 @@ async function main() {
       name: c.partner2.name,
       token: c.partner2.token,
       gender: c.partner2.gender,
-      alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : 'El Guardián del Pacto'),
-      teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : 'Aquelarre del Éxtasis'),
+      alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Cazador de Almas' : 'El Guardián del Pacto')),
+      teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : (c.partner2.token === 'fernando' ? 'Secta de la Vela Negra' : 'Aquelarre del Éxtasis')),
       coupleNick: c.nickname,
     };
 
@@ -631,7 +631,7 @@ async function main() {
     <div class="controls-center">
       <div class="mode-toggles">
         <button id="btnModeSingle" class="toggle-btn active" onclick="setMode('single')">📄 Hoja a Hoja (1 Pareja)</button>
-        <button id="btnModeAll" class="toggle-btn" onclick="setMode('all')">📚 Ver Todas (23 Hojas)</button>
+        <button id="btnModeAll" class="toggle-btn" onclick="setMode('all')">📚 Ver Todas (${couples.length} Hojas)</button>
       </div>
 
       <div id="singleNav" class="single-nav">
@@ -651,12 +651,12 @@ async function main() {
 
       <!-- Botón Imprimir Todas -->
       <button id="btnPrintAll" class="btn btn-secondary" onclick="printAll()" style="display: none;">
-        🖨️ IMPRIMIR LAS 23 HOJAS
+        🖨️ IMPRIMIR LAS ${couples.length} HOJAS
       </button>
 
       <!-- Botón Descargar PDFs -->
-      <a href="PDFs_Copisteria_A4_Horizontal.zip" download class="btn btn-zip" title="Descargar paquete ZIP con los 23 PDFs individuales para llevar en PenDrive a la copistería">
-        💾 DESCARGAR 23 PDFs (ZIP)
+      <a href="PDFs_Copisteria_A4_Horizontal.zip" download class="btn btn-zip" title="Descargar paquete ZIP con los ${couples.length} PDFs individuales para llevar en PenDrive a la copistería">
+        💾 DESCARGAR ${couples.length} PDFs (ZIP)
       </a>
     </div>
   </header>
@@ -709,7 +709,7 @@ ${sheetsHtml}
         sheets.forEach(sheet => {
           sheet.style.display = 'flex';
         });
-        statusDesc.textContent = 'Mostrando todas las 23 parejas (una página por hoja)';
+        statusDesc.textContent = 'Mostrando todas las ' + ${couples.length} + ' parejas (una página por hoja)';
       }
     }
 
@@ -777,7 +777,7 @@ ${sheetsHtml}
   const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   const hasChrome = fs.existsSync(chromePath);
 
-  console.log(`Starting generation of 23 separate sheets (1 per couple)... (Headless Chrome: ${hasChrome ? 'YES' : 'NO'})`);
+  console.log(`Starting generation of ${couples.length} separate sheets (1 per couple)... (Headless Chrome: ${hasChrome ? 'YES' : 'NO'})`);
 
   for (let i = 0; i < couples.length; i++) {
     const c = couples[i];
@@ -824,21 +824,21 @@ ${sheetsHtml}
       const pdfPath = path.join(outputDir, `${filenameBase}.pdf`);
       try {
         execSync(`"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${pdfPath}" --print-to-pdf-no-header "file://${singleHtmlPath}"`, { stdio: 'ignore' });
-        process.stdout.write(`[${c.coupleIndex}/23] `);
+        process.stdout.write(`[${c.coupleIndex}/${couples.length}] `);
       } catch (err) {
         console.error(`Error rendering PDF for couple ${c.coupleIndex}:`, err.message);
       }
     }
   }
-  console.log('\n✅ All 23 individual PDFs generated successfully!');
+  console.log(`\n✅ All ${couples.length} individual PDFs generated successfully!`);
 
-  // Render combined 23-page PDF
+  // Render combined PDF
   if (hasChrome) {
-    const combinedPdfPath = path.join(outputDir, `00_TODAS_LAS_23_PAREJAS_A4_HORIZONTAL.pdf`);
+    const combinedPdfPath = path.join(outputDir, `00_TODAS_LAS_${couples.length}_PAREJAS_A4_HORIZONTAL.pdf`);
     const fullHtmlPath = path.join(__dirname, '..', 'tarjetas_puertas_A4_horizontal.html');
     try {
       execSync(`"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf="${combinedPdfPath}" --print-to-pdf-no-header "file://${fullHtmlPath}"`, { stdio: 'ignore' });
-      console.log('✅ Generated 00_TODAS_LAS_23_PAREJAS_A4_HORIZONTAL.pdf (23 pages)');
+      console.log(`✅ Generated 00_TODAS_LAS_${couples.length}_PAREJAS_A4_HORIZONTAL.pdf (${couples.length} pages)`);
     } catch (err) {
       console.error('Error rendering combined PDF:', err.message);
     }
@@ -856,7 +856,7 @@ ${sheetsHtml}
 
     execSync(`cd "${path.join(__dirname, '..')}" && /usr/bin/zip -r "${zipPathInRoot}" PDFs_Copisteria_A4_Horizontal/ -x "*.DS_Store"`, { stdio: 'ignore' });
     fs.copyFileSync(zipPathInRoot, zipPathInPublic);
-    console.log('✅ Generated ZIP archive with all 23 PDFs for copistería: public/PDFs_Copisteria_A4_Horizontal.zip');
+    console.log(`✅ Generated ZIP archive with all ${couples.length} PDFs for copistería: public/PDFs_Copisteria_A4_Horizontal.zip`);
   } catch (err) {
     console.error('Error creating ZIP archive:', err.message);
   }
