@@ -37,3 +37,7 @@ next-env.d.ts
 PDFs_Copisteria_A4_Horizontal/
 PDFs_Copisteria_A4_Horizontal.zip
 /marcador_clanes_A3.pdf
+PDFs_Tarjetas_Juegos/
+*.zip
+public/*.zip
+public/*.pdf
