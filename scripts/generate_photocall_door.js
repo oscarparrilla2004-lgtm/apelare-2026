@@ -13,9 +13,9 @@ async function main() {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  // Read the HD image and encode to base64 for self-contained, high-speed rendering
-  const imgPath = path.join(publicDir, 'images', 'photocall_puerta_akelarre_hd.jpg');
-  const fallbackImgPath = path.join(publicDir, 'images', 'photocall_puerta_akelarre.jpg');
+  // Read the realistic cinematic horror image
+  const imgPath = path.join(publicDir, 'images', 'photocall_puerta_terror_hd.jpg');
+  const fallbackImgPath = path.join(publicDir, 'images', 'photocall_puerta_terror.jpg');
   const chosenPath = fs.existsSync(imgPath) ? imgPath : fallbackImgPath;
   const imgBase64 = 'data:image/jpeg;base64,' + fs.readFileSync(chosenPath).toString('base64');
 

@@ -168,7 +168,7 @@ export default function PhotocallPuertaPage() {
                       className="absolute top-0 bottom-0 w-[420px]"
                       style={{
                         left: `-${idx * (420 / 6)}px`,
-                        backgroundImage: 'url(/images/photocall_puerta_akelarre_hd.jpg)',
+                        backgroundImage: 'url(/images/photocall_puerta_terror_hd.jpg)',
                         backgroundSize: '420px 100%',
                         backgroundPosition: 'top left',
                       }}
