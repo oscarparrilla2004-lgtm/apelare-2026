@@ -23,6 +23,7 @@ import {
   Printer,
   Trophy,
   CreditCard,
+  DoorOpen,
 } from 'lucide-react';
 
 export default function OrganizacionPage() {
@@ -410,6 +411,14 @@ export default function OrganizacionPage() {
               <span>📇 TARJETAS JUEGO (CRÉDITO)</span>
             </Link>
 
+            <Link
+              href="/photocall-puerta"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-950 via-stone-900 to-purple-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold"
+            >
+              <DoorOpen className="w-4 h-4 text-gold" />
+              <span>🚪 PHOTOCALL PUERTA (80×200)</span>
+            </Link>
+
             <button
               onClick={() => setShowResetConfirm(true)}
               className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-red-950/40 border border-red-500/50 text-red-300 text-xs font-gothic tracking-wider hover:bg-red-900/60 active:scale-95 transition-all cursor-pointer"
@@ -667,6 +676,14 @@ export default function OrganizacionPage() {
                 >
                   <CreditCard className="w-4 h-4 text-amber-400" />
                   <span>📇 TARJETAS JUEGO (CRÉDITO)</span>
+                </Link>
+
+                <Link
+                  href="/photocall-puerta"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-950 via-stone-900 to-purple-950 border-2 border-gold text-amber-200 text-xs font-gothic tracking-wider hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] cursor-pointer font-bold"
+                >
+                  <DoorOpen className="w-4 h-4 text-gold" />
+                  <span>🚪 PHOTOCALL PUERTA (80×200)</span>
                 </Link>
               </div>
             </div>
