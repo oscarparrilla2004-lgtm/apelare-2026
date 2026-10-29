@@ -114,7 +114,7 @@ async function main() {
   couplesConfig.forEach((c, cIdx) => {
     // Partner 1
     const m1 = membersByToken[c.partner1.token.toUpperCase()];
-    const p1ClanId = m1?.teamId || (c.partner1.token === 'soraya' ? 'organizacion' : (c.partner1.token === 'mar' ? 'akelarre_extasis' : (c.partner1.token === 'vir' ? 'vela_negra' : (c.partner1.token === 'bea-sergio' ? 'vela_negra' : 'akelarre_extasis'))));
+    const p1ClanId = m1?.teamId || (c.partner1.token === 'soraya' ? 'organizacion' : (c.partner1.token === 'mar' ? 'placer_oscuro' : (c.partner1.token === 'vir' ? 'vela_negra' : (c.partner1.token === 'bea-sergio' ? 'vela_negra' : 'akelarre_extasis'))));
     const p1Alias = m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Cazadora de Almas' : (c.partner1.token === 'vir' ? 'La Invocadora' : (c.partner1.token === 'bea-sergio' ? 'La Ocultista' : 'La Hechicera'))));
     
     cards.push({

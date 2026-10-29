@@ -68,7 +68,7 @@ export default function ImprimirParejasPage() {
           token: c.partner1.token,
           gender: c.partner1.gender,
           alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Cazadora de Almas' : (c.partner1.token === 'vir' ? 'La Invocadora' : (c.partner1.token === 'bea-sergio' ? 'La Ocultista' : 'La Hechicera')))),
-          teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Aquelarre del Éxtasis' : (c.partner1.token === 'vir' ? 'Secta de la Vela Negra' : 'Secta de la Vela Negra'))),
+          teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Hechiceros del Placer Oscuro' : (c.partner1.token === 'vir' ? 'Secta de la Vela Negra' : 'Secta de la Vela Negra'))),
           coupleNick: c.nickname,
         };
 

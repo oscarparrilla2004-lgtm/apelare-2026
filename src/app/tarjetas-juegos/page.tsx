@@ -148,7 +148,7 @@ export default function TarjetasJuegosPage() {
           (c.partner1.token === 'soraya'
             ? 'organizacion'
             : c.partner1.token === 'mar'
-            ? 'akelarre_extasis'
+            ? 'placer_oscuro'
             : c.partner1.token === 'vir'
             ? 'vela_negra'
             : c.partner1.token === 'bea-sergio'
