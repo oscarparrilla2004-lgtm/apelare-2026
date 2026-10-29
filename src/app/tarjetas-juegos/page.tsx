@@ -149,6 +149,8 @@ export default function TarjetasJuegosPage() {
             ? 'organizacion'
             : c.partner1.token === 'mar'
             ? 'akelarre_extasis'
+            : c.partner1.token === 'vir'
+            ? 'vela_negra'
             : c.partner1.token === 'bea-sergio'
             ? 'vela_negra'
             : 'akelarre_extasis');
@@ -158,6 +160,8 @@ export default function TarjetasJuegosPage() {
             ? 'La Gran Anfitriona'
             : c.partner1.token === 'mar'
             ? 'La Cazadora de Almas'
+            : c.partner1.token === 'vir'
+            ? 'La Invocadora'
             : c.partner1.token === 'bea-sergio'
             ? 'La Ocultista'
             : 'La Hechicera');
@@ -181,6 +185,8 @@ export default function TarjetasJuegosPage() {
             ? 'organizacion'
             : c.partner2.token === 'fernando'
             ? 'vela_negra'
+            : c.partner2.token === 'miky'
+            ? 'pecadores_caldero'
             : c.partner2.token === 'jorge-aran'
             ? 'akelarre_extasis'
             : 'pecadores_caldero');
@@ -190,6 +196,8 @@ export default function TarjetasJuegosPage() {
             ? 'El Gran Anfitrión'
             : c.partner2.token === 'fernando'
             ? 'El Guardián del Pacto'
+            : c.partner2.token === 'miky'
+            ? 'El Hechicero'
             : c.partner2.token === 'jorge-aran'
             ? 'El Guardián del Pacto'
             : 'El Nigromante');
@@ -206,10 +214,10 @@ export default function TarjetasJuegosPage() {
         });
       });
 
-      // Wildcards to complete sheet 5
+      // Wildcards to complete sheet 5 (44 guests + 6 comodines = 50 cards in 5 sheets of 10)
       const wildcards: GameCardItem[] = [
         {
-          cardIndex: 49,
+          cardIndex: 45,
           coupleIndex: 0,
           name: 'INVITADO DE HONOR',
           token: 'wildcard-1',
@@ -220,7 +228,7 @@ export default function TarjetasJuegosPage() {
           isSpecial: true,
         },
         {
-          cardIndex: 50,
+          cardIndex: 46,
           coupleIndex: 0,
           name: 'ORÁCULO DEL DESTINO',
           token: 'wildcard-2',
@@ -228,6 +236,50 @@ export default function TarjetasJuegosPage() {
           coupleNick: 'COMODÍN DE JUEGO',
           alias: 'La Sombra de la Noche',
           clanDef: CLANS_MAP.vela_negra,
+          isSpecial: true,
+        },
+        {
+          cardIndex: 47,
+          coupleIndex: 0,
+          name: 'MAESTRO DEL CALDERO',
+          token: 'wildcard-3',
+          gender: 'masculino',
+          coupleNick: 'COMODÍN DE JUEGO',
+          alias: 'El Brujo de Fuego',
+          clanDef: CLANS_MAP.pecadores_caldero,
+          isSpecial: true,
+        },
+        {
+          cardIndex: 48,
+          coupleIndex: 0,
+          name: 'DAMA DEL ÉXTASIS',
+          token: 'wildcard-4',
+          gender: 'femenino',
+          coupleNick: 'COMODÍN DE JUEGO',
+          alias: 'La Hechicera de Rubí',
+          clanDef: CLANS_MAP.akelarre_extasis,
+          isSpecial: true,
+        },
+        {
+          cardIndex: 49,
+          coupleIndex: 0,
+          name: 'REY DE LA OSCURIDAD',
+          token: 'wildcard-5',
+          gender: 'masculino',
+          coupleNick: 'COMODÍN DE JUEGO',
+          alias: 'El Señor del Placer Oscuro',
+          clanDef: CLANS_MAP.placer_oscuro,
+          isSpecial: true,
+        },
+        {
+          cardIndex: 50,
+          coupleIndex: 0,
+          name: 'COMODÍN SAGRADO',
+          token: 'wildcard-6',
+          gender: 'femenino',
+          coupleNick: 'COMODÍN DE JUEGO',
+          alias: 'La Guardiana del Secreto',
+          clanDef: CLANS_MAP.organizacion,
           isSpecial: true,
         },
       ];
@@ -343,7 +395,7 @@ export default function TarjetasJuegosPage() {
               </div>
               <div className="card-id-number" style={{ color: clan.primaryColor }}>
                 #{padNum}
-                <span style={{ opacity: 0.6 }}>/48</span>
+                <span style={{ opacity: 0.6 }}>/44</span>
               </div>
             </div>
 

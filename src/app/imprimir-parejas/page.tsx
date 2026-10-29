@@ -67,8 +67,8 @@ export default function ImprimirParejasPage() {
           name: c.partner1.name,
           token: c.partner1.token,
           gender: c.partner1.gender,
-          alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Hechicera' : 'La Ocultista')),
-          teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Aquelarre del Éxtasis' : 'Secta de la Vela Negra')),
+          alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Cazadora de Almas' : (c.partner1.token === 'vir' ? 'La Invocadora' : (c.partner1.token === 'bea-sergio' ? 'La Ocultista' : 'La Hechicera')))),
+          teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Aquelarre del Éxtasis' : (c.partner1.token === 'vir' ? 'Secta de la Vela Negra' : 'Secta de la Vela Negra'))),
           coupleNick: c.nickname,
         };
 
@@ -76,8 +76,8 @@ export default function ImprimirParejasPage() {
           name: c.partner2.name,
           token: c.partner2.token,
           gender: c.partner2.gender,
-          alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Cazador de Almas' : 'El Guardián del Pacto')),
-          teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : (c.partner2.token === 'fernando' ? 'Secta de la Vela Negra' : 'Aquelarre del Éxtasis')),
+          alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Guardián del Pacto' : (c.partner2.token === 'miky' ? 'El Hechicero' : (c.partner2.token === 'jorge-aran' ? 'El Guardián del Pacto' : 'El Nigromante')))),
+          teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : (c.partner2.token === 'fernando' ? 'Secta de la Vela Negra' : (c.partner2.token === 'miky' ? 'Los Pecadores del Caldero' : 'Aquelarre del Éxtasis'))),
           coupleNick: c.nickname,
         };
 
@@ -283,10 +283,10 @@ export default function ImprimirParejasPage() {
               href="/PDFs_Copisteria_A4_Horizontal.zip"
               download
               className="px-4 py-2 rounded-full border-2 border-emerald-400 bg-emerald-700 hover:bg-emerald-600 font-sans font-bold text-xs tracking-wider uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(16,185,129,0.5)] flex items-center gap-1.5 cursor-pointer text-white no-underline"
-              title="Descargar ZIP con los 24 PDFs individuales para llevar en PenDrive a la copistería"
+              title={`Descargar ZIP con los ${couples.length} PDFs individuales para llevar en PenDrive a la copistería`}
             >
               <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>DESCARGAR 24 PDFs (ZIP)</span>
+              <span>DESCARGAR {couples.length} PDFs (ZIP)</span>
             </a>
           </div>
         </div>

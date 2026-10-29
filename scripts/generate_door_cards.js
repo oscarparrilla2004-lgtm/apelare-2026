@@ -51,8 +51,8 @@ async function main() {
       name: c.partner1.name,
       token: c.partner1.token,
       gender: c.partner1.gender,
-      alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Hechicera' : 'La Ocultista')),
-      teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Aquelarre del Éxtasis' : 'Secta de la Vela Negra')),
+      alias: m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Cazadora de Almas' : (c.partner1.token === 'vir' ? 'La Invocadora' : (c.partner1.token === 'bea-sergio' ? 'La Ocultista' : 'La Hechicera')))),
+      teamName: m1?.teamName || (c.partner1.token === 'soraya' ? 'Organización del Akelarre' : (c.partner1.token === 'mar' ? 'Aquelarre del Éxtasis' : (c.partner1.token === 'vir' ? 'Secta de la Vela Negra' : 'Secta de la Vela Negra'))),
       coupleNick: c.nickname,
     };
 
@@ -60,8 +60,8 @@ async function main() {
       name: c.partner2.name,
       token: c.partner2.token,
       gender: c.partner2.gender,
-      alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Cazador de Almas' : 'El Guardián del Pacto')),
-      teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : (c.partner2.token === 'fernando' ? 'Secta de la Vela Negra' : 'Aquelarre del Éxtasis')),
+      alias: m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Guardián del Pacto' : (c.partner2.token === 'miky' ? 'El Hechicero' : (c.partner2.token === 'jorge-aran' ? 'El Guardián del Pacto' : 'El Nigromante')))),
+      teamName: m2?.teamName || (c.partner2.token === 'oscar' ? 'Organización del Akelarre' : (c.partner2.token === 'fernando' ? 'Secta de la Vela Negra' : (c.partner2.token === 'miky' ? 'Los Pecadores del Caldero' : 'Aquelarre del Éxtasis'))),
       coupleNick: c.nickname,
     };
 

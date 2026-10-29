@@ -114,8 +114,8 @@ async function main() {
   couplesConfig.forEach((c, cIdx) => {
     // Partner 1
     const m1 = membersByToken[c.partner1.token.toUpperCase()];
-    const p1ClanId = m1?.teamId || (c.partner1.token === 'soraya' ? 'organizacion' : (c.partner1.token === 'mar' ? 'akelarre_extasis' : (c.partner1.token === 'bea-sergio' ? 'vela_negra' : 'akelarre_extasis')));
-    const p1Alias = m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Cazadora de Almas' : (c.partner1.token === 'bea-sergio' ? 'La Ocultista' : 'La Hechicera')));
+    const p1ClanId = m1?.teamId || (c.partner1.token === 'soraya' ? 'organizacion' : (c.partner1.token === 'mar' ? 'akelarre_extasis' : (c.partner1.token === 'vir' ? 'vela_negra' : (c.partner1.token === 'bea-sergio' ? 'vela_negra' : 'akelarre_extasis'))));
+    const p1Alias = m1?.aliasBrujo || (c.partner1.token === 'soraya' ? 'La Gran Anfitriona' : (c.partner1.token === 'mar' ? 'La Cazadora de Almas' : (c.partner1.token === 'vir' ? 'La Invocadora' : (c.partner1.token === 'bea-sergio' ? 'La Ocultista' : 'La Hechicera'))));
     
     cards.push({
       cardIndex: cards.length + 1,
@@ -130,8 +130,8 @@ async function main() {
 
     // Partner 2
     const m2 = membersByToken[c.partner2.token.toUpperCase()];
-    const p2ClanId = m2?.teamId || (c.partner2.token === 'oscar' ? 'organizacion' : (c.partner2.token === 'fernando' ? 'vela_negra' : (c.partner2.token === 'jorge-aran' ? 'akelarre_extasis' : 'pecadores_caldero')));
-    const p2Alias = m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Guardián del Pacto' : (c.partner2.token === 'jorge-aran' ? 'El Guardián del Pacto' : 'El Nigromante')));
+    const p2ClanId = m2?.teamId || (c.partner2.token === 'oscar' ? 'organizacion' : (c.partner2.token === 'fernando' ? 'vela_negra' : (c.partner2.token === 'miky' ? 'pecadores_caldero' : (c.partner2.token === 'jorge-aran' ? 'akelarre_extasis' : 'pecadores_caldero'))));
+    const p2Alias = m2?.aliasBrujo || (c.partner2.token === 'oscar' ? 'El Gran Anfitrión' : (c.partner2.token === 'fernando' ? 'El Guardián del Pacto' : (c.partner2.token === 'miky' ? 'El Hechicero' : (c.partner2.token === 'jorge-aran' ? 'El Guardián del Pacto' : 'El Nigromante'))));
 
     cards.push({
       cardIndex: cards.length + 1,
@@ -145,10 +145,10 @@ async function main() {
     });
   });
 
-  // Add 2 special wildcards to complete page 5 (so all 5 sheets have exactly 10 cards)
+  // Add 6 special wildcards to complete page 5 (44 guests + 6 comodines = 50 cards in 5 sheets of 10)
   const wildcards = [
     {
-      cardIndex: 49,
+      cardIndex: 45,
       coupleIndex: 0,
       name: 'INVITADO DE HONOR',
       token: 'wildcard-1',
@@ -159,7 +159,7 @@ async function main() {
       isSpecial: true,
     },
     {
-      cardIndex: 50,
+      cardIndex: 46,
       coupleIndex: 0,
       name: 'ORÁCULO DEL DESTINO',
       token: 'wildcard-2',
@@ -169,10 +169,54 @@ async function main() {
       clanDef: CLANS_MAP.vela_negra,
       isSpecial: true,
     },
+    {
+      cardIndex: 47,
+      coupleIndex: 0,
+      name: 'MAESTRO DEL CALDERO',
+      token: 'wildcard-3',
+      gender: 'masculino',
+      coupleNick: 'COMODÍN DE JUEGO',
+      alias: 'El Brujo de Fuego',
+      clanDef: CLANS_MAP.pecadores_caldero,
+      isSpecial: true,
+    },
+    {
+      cardIndex: 48,
+      coupleIndex: 0,
+      name: 'DAMA DEL ÉXTASIS',
+      token: 'wildcard-4',
+      gender: 'femenino',
+      coupleNick: 'COMODÍN DE JUEGO',
+      alias: 'La Hechicera de Rubí',
+      clanDef: CLANS_MAP.akelarre_extasis,
+      isSpecial: true,
+    },
+    {
+      cardIndex: 49,
+      coupleIndex: 0,
+      name: 'REY DE LA OSCURIDAD',
+      token: 'wildcard-5',
+      gender: 'masculino',
+      coupleNick: 'COMODÍN DE JUEGO',
+      alias: 'El Señor del Placer Oscuro',
+      clanDef: CLANS_MAP.placer_oscuro,
+      isSpecial: true,
+    },
+    {
+      cardIndex: 50,
+      coupleIndex: 0,
+      name: 'COMODÍN SAGRADO',
+      token: 'wildcard-6',
+      gender: 'femenino',
+      coupleNick: 'COMODÍN DE JUEGO',
+      alias: 'La Guardiana del Secreto',
+      clanDef: CLANS_MAP.organizacion,
+      isSpecial: true,
+    },
   ];
 
   const allCards = [...cards, ...wildcards];
-  console.log(`🃏 Total tarjetas generadas: ${cards.length} participantes + 2 comodines = ${allCards.length} tarjetas en 5 hojas A4.`);
+  console.log(`🃏 Total tarjetas generadas: ${cards.length} participantes + 6 comodines = ${allCards.length} tarjetas en 5 hojas A4.`);
 
   // 4. Render HTML for a Single Card
   function renderSingleCard(c) {
@@ -221,7 +265,7 @@ async function main() {
                 <div class="chip-center" style="background: ${clan.primaryColor}; color: #000;">✦</div>
               </div>
               <div class="card-id-number" style="color: ${clan.primaryColor};">
-                #${padNum}<span style="opacity: 0.6;">/48</span>
+                #${padNum}<span style="opacity: 0.6;">/${cards.length}</span>
               </div>
             </div>
 
@@ -899,7 +943,7 @@ async function main() {
       <span class="brand-icon">🃏</span>
       <div class="brand-text">
         <h1>Tarjetas de Juego (Formato Tarjeta de Crédito 85.6 × 54 mm)</h1>
-        <p>Akelarre 2026 · 48 Miembros + 2 Comodines · 5 Páginas A4 listas para Copistería</p>
+        <p>Akelarre 2026 · 44 Miembros + 6 Comodines · 5 Páginas A4 listas para Copistería</p>
       </div>
     </div>
 
